@@ -13,7 +13,7 @@ namespace ZipFileSystem
     public static class Utils
     {
 
-        public static string FullPath(this string s) => Path.GetFullPath(s).Replace('\\', '/');
+        public static string FullPath(this string s) => Path.GetFullPath(s).ToLower().Replace('\\', '/');
 
         public static string GetDirectory(this string s) => Path.GetDirectoryName(s).Replace('\\', '/');
 
@@ -59,6 +59,11 @@ namespace ZipFileSystem
             return ret;
         }
 
+        public static string FormattedPath(this string path)
+        {
+            return path.ToLower().Replace("\\", "/");
+        }
+
         public static Stream GenerateStreamFromString(string s)
         {
             var stream = new MemoryStream();
@@ -71,6 +76,10 @@ namespace ZipFileSystem
 
         public static byte[] ReadAllBytes(this Stream source)
         {
+
+            if (source == null)
+                return null;
+
             long originalPosition = source.Position;
             if (source.Position != 0)
                 source.Position = 0;

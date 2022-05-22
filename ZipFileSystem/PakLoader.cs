@@ -18,15 +18,7 @@ namespace ZipFileSystem
 
         public ILogger Logs;
 
-        public PakLoader()
-        {
-
-        }
-
-        public PakLoader(ILogger logger)
-        {
-            Logs = logger;
-        }
+        public Dictionary<string, ZipArchiveEntry> ZipEntries = new Dictionary<string, ZipArchiveEntry>();
 
         public PakLoader(string startDir, ILogger logger = null)
         {
@@ -40,7 +32,21 @@ namespace ZipFileSystem
             {
                 try
                 {
-                    Paks.Add(ZipArchive.Open(f));
+                    ZipArchive za = ZipArchive.Open(f);
+                    Paks.Add(za);
+                    foreach(var entry in za.Entries)
+                    {
+                        if(ZipEntries.ContainsKey(entry.Key.FullPath()))
+                        {
+                            if(entry.LastModifiedTime > ZipEntries[entry.Key.FullPath()].LastModifiedTime)
+                            {
+                                ZipEntries[entry.Key.FullPath()] = entry;
+                            }
+                        } else
+                        {
+                            ZipEntries[entry.Key.FullPath()] = entry;
+                        }
+                    }
                 } catch(Exception e)
                 {
                     Logs?.WriteLine(e.Message, Color.Red);
@@ -50,30 +56,32 @@ namespace ZipFileSystem
 
         public bool ContainsFile(string path)
         {
+            return ZipEntries.ContainsKey(path.FullPath());
+        }
+
+        public Stream OpenFile(string path)
+        {
+            var cpath = path.FullPath();
+            if (ContainsFile(cpath))
+                return ZipEntries[cpath].OpenEntryStream();
+            Logs.WriteLine($"Failed dict method with: {cpath} original: {path}");
+            return OpenFileOld(path);
+        }
+
+        public Stream OpenFileOld(string path)
+        {
+            ZipArchiveEntry en = null;
             foreach (var a in Paks)
             {
                 var f = a.GetEntry(path);
                 if (f != null)
                 {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Stream OpenFile(string path)
-        {
-            ZipArchiveEntry en = null;
-            foreach(var a in Paks)
-            {
-                var f = a.GetEntry(path);
-                if(f != null)
-                {
-                    if(en != null)
+                    if (en != null)
                     {
                         if (en.LastModifiedTime < f.LastModifiedTime)
                             en = f;
-                    } else
+                    }
+                    else
                     {
                         en = f;
                     }
@@ -97,26 +105,7 @@ namespace ZipFileSystem
 
         public byte[] ReadFileBytes(string path) 
         {
-            ZipArchiveEntry en = null;
-            foreach (var a in Paks)
-            {
-                var f = a.GetEntry(path);
-                if (f != null)
-                {
-                    if (en != null)
-                    {
-                        if (en.LastModifiedTime < f.LastModifiedTime)
-                            en = f;
-                    }
-                    else
-                    {
-                        en = f;
-                    }
-                }
-            }
-            if (en == null)
-                return null;
-            return en.OpenEntryStream().ReadAllBytes();
+            return OpenFile(path).ReadAllBytes();
         }
 
         public void WriteToFile(string path, byte[] bytes)
@@ -131,24 +120,7 @@ namespace ZipFileSystem
 
         public DateTime FileLastModifyTime(string path)
         {
-            ZipArchiveEntry en = null;
-            foreach (var a in Paks)
-            {
-                var f = a.GetEntry(path);
-                if (f != null)
-                {
-                    if (en != null)
-                    {
-                        if (en.LastModifiedTime < f.LastModifiedTime)
-                            en = f;
-                    }
-                    else
-                    {
-                        en = f;
-                    }
-                }
-            }
-            return ((DateTime)en.LastModifiedTime).ToUniversalTime();
+            return ((DateTime)ZipEntries[path.FullPath()].LastModifiedTime).ToUniversalTime();
         }
     }
 
