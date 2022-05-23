@@ -79,10 +79,14 @@ namespace ZipFileSystem
 
             if (source == null)
                 return null;
-
-            long originalPosition = source.Position;
-            if (source.Position != 0)
-                source.Position = 0;
+            long originalPosition = 0;
+            try
+            {
+                originalPosition = source.Position;
+                if (source.Position != 0)
+                    source.Position = 0;
+            }
+            catch (Exception) { }
 
             try
             {

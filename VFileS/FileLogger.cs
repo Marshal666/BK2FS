@@ -28,9 +28,14 @@ class FileLogger : ILogger
         sw.WriteLine(text);
     }
 
-    ~FileLogger()
+    public void Close()
     {
         sw.Close();
         f.Close();
+    }
+
+    ~FileLogger()
+    {
+        Close();
     }
 }

@@ -13,7 +13,13 @@ class Program
         FileLogger fl = new FileLogger("output.txt");
         FolderSystem fs = new FolderSystem(args[0]);
         VirtualFileSystem FileSystem = new VirtualFileSystem(fs);
-        FileSystem.AddSystem(new PakLoader(args[0], cl));
+        PakLoader pk;
+        FileSystem.AddSystem(pk = new PakLoader(args[0], cl));
+        if (args.Length > 1)
+        {
+            fs.AddDir(args[1]);
+            pk.OpenDirectory(args[1]);
+        }
 
         var f = FileSystem.ReadFileBytes("Consts/Test/Test_MultiplayerConsts.xdb");
         
@@ -51,6 +57,7 @@ class Program
                 var level = side.TechLevels.Items[inx];
                 sb.Append($"\t\tStarting Units:\n");
                 var startingUnits = (Reinforcement)reinfSer.Deserialize(new MemoryStream(level.StartingUnits.GetFileContentsBin(FileSystem)));
+                Dictionary<string, int> units = new Dictionary<string, int>();
                 foreach (var unit in startingUnits.Entries.Items)
                 {
                     if(!string.IsNullOrEmpty(unit.MechUnit.FormattedRef))
@@ -64,9 +71,13 @@ class Program
                         string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
                         if (!string.IsNullOrWhiteSpace(name))
                         {
-                            sb.Append("\t\t\t");
-                            sb.Append(name);
-                            sb.Append('\n');
+                            if (units.Keys.Contains(name))
+                                units[name]++;
+                            else
+                                units[name] = 1;
+                            //sb.Append("\t\t\t");
+                            //sb.Append(name);
+                            //sb.Append('\n');
                         }
                     } else if(!string.IsNullOrEmpty(unit.Squad.FormattedRef))
                     {
@@ -74,11 +85,23 @@ class Program
                         string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
                         if (!string.IsNullOrWhiteSpace(name))
                         {
-                            sb.Append("\t\t\t");
-                            sb.Append(name);
-                            sb.Append('\n');
+                            if (units.Keys.Contains(name))
+                                units[name]++;
+                            else
+                                units[name] = 1;
+                            //sb.Append("\t\t\t");
+                            //sb.Append(name);
+                            //sb.Append('\n');
                         }
                     }
+                }
+                foreach (var unit in units)
+                {
+                    sb.Append("\t\t\t");
+                    sb.Append(unit.Value);
+                    sb.Append("x ");
+                    sb.Append(unit.Key);
+                    sb.Append('\n');
                 }
                 sb.Append("\t\tReinforcements:\n");
                 foreach(var reinfs in level.Reinforcements.Items)
@@ -96,6 +119,7 @@ class Program
                     sb.Append("\t\t\t");
                     sb.Append(reinf.Type);
                     sb.Append(":\n");
+                    units.Clear();
                     foreach (var unit in reinf.Entries.Items)
                     {
                         if (!string.IsNullOrEmpty(unit.MechUnit.FormattedRef))
@@ -117,9 +141,13 @@ class Program
                             string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
                             if (!string.IsNullOrWhiteSpace(name))
                             {
-                                sb.Append("\t\t\t\t");
-                                sb.Append(name);
-                                sb.Append('\n');
+                                if (units.Keys.Contains(name))
+                                    units[name]++;
+                                else
+                                    units[name] = 1;
+                                //sb.Append("\t\t\t\t");
+                                //sb.Append(name);
+                                //sb.Append('\n');
                             }
                         }
                         else if (!string.IsNullOrEmpty(unit.Squad.FormattedRef))
@@ -136,17 +164,30 @@ class Program
                             string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
                             if (!string.IsNullOrWhiteSpace(name))
                             {
-                                sb.Append("\t\t\t\t");
-                                sb.Append(name);
-                                sb.Append('\n');
+                                if (units.Keys.Contains(name))
+                                    units[name]++;
+                                else
+                                    units[name] = 1;
+                                //sb.Append("\t\t\t\t");
+                                //sb.Append(name);
+                                //sb.Append('\n');
                             }
                         }
+                    }
+                    foreach (var unit in units)
+                    {
+                        sb.Append("\t\t\t\t");
+                        sb.Append(unit.Value);
+                        sb.Append("x ");
+                        sb.Append(unit.Key);
+                        sb.Append('\n');
                     }
                 }
                 inx++;
             }
             fl.WriteLine(sb.ToString());
         }
+        fl.Close();
     }
 
 }
