@@ -33,13 +33,13 @@ class Program
         fl.WriteLine("Tech Levels:");
         foreach(var year in data.TechLevels.Items)
         {
-            fl.WriteLine("Name: " + year.NameFileRef.GetFileContents(FileSystem));
+            fl.WriteLine("\tName: " + year.NameFileRef.GetFileContents(FileSystem, "Consts/Test"));
         }
 
         fl.WriteLine("Sides:");
         foreach(var side in data.Sides.Items)
         {
-            fl.WriteLine(side.NameFileRef.GetFileContents(FileSystem));
+            fl.WriteLine("\t" + side.NameFileRef.GetFileContents(FileSystem));
         }
 
         fl.WriteLine("Units per Side/Tech level:");
@@ -120,59 +120,68 @@ class Program
                     sb.Append(reinf.Type);
                     sb.Append(":\n");
                     units.Clear();
-                    foreach (var unit in reinf.Entries.Items)
+                    if (reinf.Entries.Items != null)
                     {
-                        if (!string.IsNullOrEmpty(unit.MechUnit.FormattedRef))
+                        foreach (var unit in reinf.Entries.Items)
                         {
-                            MechUnitRPGStats stats = null;
-                            try
+                            if (!string.IsNullOrEmpty(unit.MechUnit.FormattedRef))
                             {
-                                var ss = unit.MechUnit.GetFileContentsBin(FileSystem).ToMemoryStream();
-                                if (ss == null)
+                                MechUnitRPGStats stats = null;
+                                try
+                                {
+                                    var ss = unit.MechUnit.GetFileContentsBin(FileSystem).ToMemoryStream();
+                                    if (ss == null)
+                                        continue;
+                                    stats = (MechUnitRPGStats)mechStatsSer.Deserialize(ss);
+                                    if (stats == null)
+                                        continue;
+                                }
+                                catch (Exception ex)
+                                {
+                                    fl.WriteLine($"Error reading {unit.MechUnit.FormattedRef}: " + ex.Message);
                                     continue;
-                                stats = (MechUnitRPGStats)mechStatsSer.Deserialize(ss);
-                                if (stats == null)
-                                    continue;
-                            } catch (Exception ex)
-                            {
-                                fl.WriteLine($"Error reading {unit.MechUnit.FormattedRef}: " + ex.Message);
-                                continue;
+                                }
+                                string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
+                                if (!string.IsNullOrWhiteSpace(name))
+                                {
+                                    if (units.Keys.Contains(name))
+                                        units[name]++;
+                                    else
+                                        units[name] = 1;
+                                    //sb.Append("\t\t\t\t");
+                                    //sb.Append(name);
+                                    //sb.Append('\n');
+                                }
                             }
-                            string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
-                            if (!string.IsNullOrWhiteSpace(name))
+                            else if (!string.IsNullOrEmpty(unit.Squad.FormattedRef))
                             {
-                                if (units.Keys.Contains(name))
-                                    units[name]++;
-                                else
-                                    units[name] = 1;
-                                //sb.Append("\t\t\t\t");
-                                //sb.Append(name);
-                                //sb.Append('\n');
+                                SquadRPGStats stats = null;
+                                try
+                                {
+                                    stats = (SquadRPGStats)squadSer.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
+                                }
+                                catch (Exception ex)
+                                {
+                                    fl.WriteLine($"Error reading {unit.Squad.FormattedRef}: " + ex.Message);
+                                    continue;
+                                }
+                                string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
+                                if (!string.IsNullOrWhiteSpace(name))
+                                {
+                                    if (units.Keys.Contains(name))
+                                        units[name]++;
+                                    else
+                                        units[name] = 1;
+                                    //sb.Append("\t\t\t\t");
+                                    //sb.Append(name);
+                                    //sb.Append('\n');
+                                }
                             }
                         }
-                        else if (!string.IsNullOrEmpty(unit.Squad.FormattedRef))
-                        {
-                            SquadRPGStats stats = null;
-                            try
-                            {
-                                stats = (SquadRPGStats)squadSer.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
-                            } catch (Exception ex)
-                            {
-                                fl.WriteLine($"Error reading {unit.Squad.FormattedRef}: " + ex.Message);
-                                continue;
-                            }
-                            string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
-                            if (!string.IsNullOrWhiteSpace(name))
-                            {
-                                if (units.Keys.Contains(name))
-                                    units[name]++;
-                                else
-                                    units[name] = 1;
-                                //sb.Append("\t\t\t\t");
-                                //sb.Append(name);
-                                //sb.Append('\n');
-                            }
-                        }
+                    }
+                    if (units.Count <= 0)
+                    {
+                        sb.Append("\t\t\t\tEmpty\n");
                     }
                     foreach (var unit in units)
                     {
