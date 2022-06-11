@@ -70,6 +70,31 @@ namespace ZipFileSystem
             return ret;
         }
 
+        public string GetFileSource(string path)
+        {
+            string ret = null;
+            DateTime ct = default;
+            foreach (var s in Systems)
+            {
+                if (s.ContainsFile(path))
+                {
+                    DateTime t = s.FileLastModifyTime(path);
+                    if (ret == null)
+                    {
+                        ret = s.GetFileSource(path);
+                        ct = t;
+                        continue;
+                    }
+                    if (ct < t)
+                    {
+                        ret = s.GetFileSource(path);
+                        ct = t;
+                    }
+                }
+            }
+            return ret;
+        }
+
         public Stream OpenFile(string path)
         {
             if (Cache.ContainsKey(path)) {
@@ -160,5 +185,6 @@ namespace ZipFileSystem
         {
             DefaultSystem.WriteToFile(path, text);
         }
+
     }
 }

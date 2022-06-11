@@ -24,5 +24,7 @@ namespace ZipFileSystem
 
         void WriteToFile(string path, string text);
 
+        string GetFileSource(string path);
+
     }
 }

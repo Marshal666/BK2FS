@@ -8,6 +8,7 @@ using System.IO;
 using System.Drawing;
 using SharpCompress;
 using SharpCompress.Archives.Zip;
+using System.Reflection;
 
 namespace ZipFileSystem
 {
@@ -121,6 +122,20 @@ namespace ZipFileSystem
         public DateTime FileLastModifyTime(string path)
         {
             return ((DateTime)ZipEntries[path.FullPath()].LastModifiedTime).ToUniversalTime();
+        }
+
+        public string GetFileSource(string path)
+        {
+            var s = OpenFile(path);
+            //hack the fucking stream using reflection to get the source .pak file
+            var f = s.GetType().GetField("_baseStream", BindingFlags.NonPublic | BindingFlags.Instance);
+            var _baseStream = f.GetValue(s);
+            var fs = _baseStream.GetType().GetField("_stream", BindingFlags.NonPublic | BindingFlags.Instance);
+            var _stream = fs.GetValue(_baseStream);
+            var fss = _stream.GetType().GetProperty("Stream", BindingFlags.NonPublic| BindingFlags.Instance);
+            FileStream Stream = (FileStream)fss.GetValue(_stream);
+            var r = Stream.Name;
+            return "pak: " + r;
         }
     }
 

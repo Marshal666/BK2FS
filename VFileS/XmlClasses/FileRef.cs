@@ -16,7 +16,7 @@ namespace ZipFileSystem
         public string href;
 
         string fc = null;
-        public string GetFileContents(IVirtualFileSystem fs, string rootDir = null, bool removeExt=true)
+        public string GetFileContents(IVirtualFileSystem fs, string rootDir = null, bool removeExt=true, ILogger? logger = null)
         {
             if (fc != null)
                 return fc;
@@ -37,6 +37,7 @@ namespace ZipFileSystem
             fc = fs.ReadTextFile(dir);
             if (fc != null)
                 return fc;
+            logger?.WriteLine($"Failed getting file on path: {dir}, it might not exist!");
             fc = fs.ReadTextFile(hreff);
             if (fc != null)
                 return fc;
@@ -44,7 +45,7 @@ namespace ZipFileSystem
         }
 
         byte[] binfc = null;
-        public byte[] GetFileContentsBin(IVirtualFileSystem fs, string rootDir = null, bool removeExt = true)
+        public byte[] GetFileContentsBin(IVirtualFileSystem fs, string? rootDir = null, bool removeExt = true, ILogger? logger = null)
         {
             if (binfc != null)
                 return binfc;
@@ -65,6 +66,7 @@ namespace ZipFileSystem
             binfc = fs.ReadFileBytes(dir);
             if (binfc != null)
                 return binfc;
+            logger?.WriteLine($"Failed getting file on path: {dir}, it might not exist!");
             binfc = fs.ReadFileBytes(hreff);
             if (binfc != null)
                 return binfc;

@@ -61,6 +61,11 @@ namespace ZipFileSystem
             return fc.LastWriteTimeUtc;
         }
 
+        public string GetFileSource(string path)
+        {
+            return "folder: " + Path.GetFullPath(path);
+        }
+
         public Stream OpenFile(string path)
         {
             string f = null;

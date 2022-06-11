@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ZipFileSystem;
 
 
-class ConsoleLogger : ILogger
+public class ConsoleLogger : ILogger
 {
     public void WriteLine(string text, Color color)
     {
