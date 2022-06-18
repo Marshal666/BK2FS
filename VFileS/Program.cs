@@ -29,17 +29,19 @@ class Program
         XmlSerializer squadSer = new XmlSerializer(typeof(SquadRPGStats));
 
         MultiplayerConsts data = (MultiplayerConsts)mpConstsSer.Deserialize(new MemoryStream(f));
-
+        fl.WriteLine("# YAML format");
         fl.WriteLine("Tech Levels:");
-        foreach(var year in data.TechLevels.Items)
+        nint ix = 0;
+        foreach (var year in data.TechLevels.Items)
         {
-            fl.WriteLine("\tName: " + year.NameFileRef.GetFileContents(FileSystem, "Consts/Test"));
+            fl.WriteLine($"    {ix++} Name: " + year.NameFileRef.GetFileContents(FileSystem, "Consts/Test"));
         }
 
         fl.WriteLine("Sides:");
+        ix = 0;
         foreach(var side in data.Sides.Items)
         {
-            fl.WriteLine("\t" + side.NameFileRef.GetFileContents(FileSystem));
+            fl.WriteLine("    " + $"{ix++}: " + side.NameFileRef.GetFileContents(FileSystem));
         }
 
         fl.WriteLine("Units per Side/Tech level:");
@@ -51,11 +53,11 @@ class Program
             int inx = 0;
             foreach (var year in data.TechLevels.Items)
             {
-                sb.Append('\t');
+                sb.Append("    ");
                 sb.Append(year.NameFileRef.GetFileContents(FileSystem));
                 sb.Append(":\n");
                 var level = side.TechLevels.Items[inx];
-                sb.Append($"\t\tStarting Units:\n");
+                sb.Append($"        Starting Units:\n");
                 var startingUnits = (Reinforcement)reinfSer.Deserialize(new MemoryStream(level.StartingUnits.GetFileContentsBin(FileSystem)));
                 Dictionary<string, int> units = new Dictionary<string, int>();
                 foreach (var unit in startingUnits.Entries.Items)
@@ -75,7 +77,7 @@ class Program
                                 units[name]++;
                             else
                                 units[name] = 1;
-                            //sb.Append("\t\t\t");
+                            //sb.Append("            ");
                             //sb.Append(name);
                             //sb.Append('\n');
                         }
@@ -89,21 +91,22 @@ class Program
                                 units[name]++;
                             else
                                 units[name] = 1;
-                            //sb.Append("\t\t\t");
+                            //sb.Append("            ");
                             //sb.Append(name);
                             //sb.Append('\n');
                         }
                     }
                 }
+                ix = 0;
                 foreach (var unit in units)
                 {
-                    sb.Append("\t\t\t");
+                    sb.Append($"            {(char)('a' + ix++)} ");
                     sb.Append(unit.Value);
-                    sb.Append("x ");
-                    sb.Append(unit.Key);
+                    sb.Append("x: ");
+                    sb.Append(unit.Key.Replace("\"","\\\""));
                     sb.Append('\n');
                 }
-                sb.Append("\t\tReinforcements:\n");
+                sb.Append("        Reinforcements:\n");
                 foreach(var reinfs in level.Reinforcements.Items)
                 {
                     Reinforcement reinf = null;
@@ -116,7 +119,7 @@ class Program
                     }
                     if (reinf == null)
                         continue;
-                    sb.Append("\t\t\t");
+                    sb.Append("            ");
                     sb.Append(reinf.Type);
                     sb.Append(":\n");
                     units.Clear();
@@ -148,7 +151,7 @@ class Program
                                         units[name]++;
                                     else
                                         units[name] = 1;
-                                    //sb.Append("\t\t\t\t");
+                                    //sb.Append("                ");
                                     //sb.Append(name);
                                     //sb.Append('\n');
                                 }
@@ -172,7 +175,7 @@ class Program
                                         units[name]++;
                                     else
                                         units[name] = 1;
-                                    //sb.Append("\t\t\t\t");
+                                    //sb.Append("                ");
                                     //sb.Append(name);
                                     //sb.Append('\n');
                                 }
@@ -181,13 +184,14 @@ class Program
                     }
                     if (units.Count <= 0)
                     {
-                        sb.Append("\t\t\t\tEmpty\n");
+                        sb.Append("                Empty: \n");
                     }
+                    ix = 0;
                     foreach (var unit in units)
                     {
-                        sb.Append("\t\t\t\t");
+                        sb.Append($"                {(char)('a' + ix++)} ");
                         sb.Append(unit.Value);
-                        sb.Append("x ");
+                        sb.Append("x: ");
                         sb.Append(unit.Key);
                         sb.Append('\n');
                     }

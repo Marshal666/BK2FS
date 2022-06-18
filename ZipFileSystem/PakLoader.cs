@@ -65,8 +65,12 @@ namespace ZipFileSystem
             var cpath = path.FullPath();
             if (ContainsFile(cpath))
                 return ZipEntries[cpath].OpenEntryStream();
-            Logs.WriteLine($"Failed dict method with: {cpath} original: {path}");
-            return OpenFileOld(path);
+            //here it might be worthwhile to print sth like "file {path} not found!"
+            return null;
+            //old method is not needed! tests say so
+            /*var oo = OpenFileOld(path);
+            Logs.WriteLine($"Failed dict method with: {cpath} original: {path}, oldr: {(oo == null ? "fail" : "success")}");
+            return oo;*/
         }
 
         public Stream OpenFileOld(string path)
@@ -126,16 +130,18 @@ namespace ZipFileSystem
 
         public string GetFileSource(string path)
         {
-            var s = OpenFile(path);
-            //hack the fucking stream using reflection to get the source .pak file
-            var f = s.GetType().GetField("_baseStream", BindingFlags.NonPublic | BindingFlags.Instance);
-            var _baseStream = f.GetValue(s);
-            var fs = _baseStream.GetType().GetField("_stream", BindingFlags.NonPublic | BindingFlags.Instance);
-            var _stream = fs.GetValue(_baseStream);
-            var fss = _stream.GetType().GetProperty("Stream", BindingFlags.NonPublic| BindingFlags.Instance);
-            FileStream Stream = (FileStream)fss.GetValue(_stream);
-            var r = Stream.Name;
-            return "pak: " + r;
+            using (var s = OpenFile(path))
+            {
+                //hack the fucking stream using reflection to get the source .pak file
+                var f = s.GetType().GetField("_baseStream", BindingFlags.NonPublic | BindingFlags.Instance);
+                var _baseStream = f.GetValue(s);
+                var fs = _baseStream.GetType().GetField("_stream", BindingFlags.NonPublic | BindingFlags.Instance);
+                var _stream = fs.GetValue(_baseStream);
+                var fss = _stream.GetType().GetProperty("Stream", BindingFlags.NonPublic | BindingFlags.Instance);
+                FileStream Stream = (FileStream)fss.GetValue(_stream);
+                var r = Stream.Name;
+                return "pak: " + r;
+            }
         }
     }
 

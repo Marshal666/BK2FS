@@ -2,7 +2,7 @@
   "profiles": {
     "VFileS": {
       "commandName": "Project",
-      "commandLineArgs": "\"D:\\Steam Library Games\\steamapps\\common\\Blitzkrieg 2 Anthology\\Blitzkrieg 2 - Fall of the Reich\\mods\\Universal MOD-18 Mytest\" \"D:\\Steam Library Games\\steamapps\\common\\Blitzkrieg 2 Anthology\\Blitzkrieg 2 - Fall of the Reich\\data\""
+      "commandLineArgs": "\"D:\\Games\\MOD_BK2_TC\\Data\""
     }
   }
 }
