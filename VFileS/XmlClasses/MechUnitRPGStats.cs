@@ -11,6 +11,8 @@ namespace ZipFileSystem
 	public class MechUnitRPGStats
 	{
 
+		public DamageLevelsClass DamageLevels;
+
 		public float MaxHP;
 
 		public FileRef IconTexture;
@@ -31,6 +33,12 @@ namespace ZipFileSystem
 			}
 			return null;
 		}
+
+		public FileRef visualObject;
+
+		public FileRef AnimableModel;
+		public FileRef TransportableModel;
+
 
 		public float Sight;
 		public float SightPower;
@@ -56,6 +64,8 @@ namespace ZipFileSystem
 		public PlatformsClass platforms;
 
 		public ArmorsClass armors;
+
+		public FileRef ArmorPattern;
 
 		///////////////////////////////////////////////////////
 		///Plane related stuff...
@@ -162,7 +172,7 @@ namespace ZipFileSystem
 						WeaponRPGStats weapon = (WeaponRPGStats)gun.Weapon.ReadXMLObject(typeof(WeaponRPGStats), fs, rootDir);
 						ret.Add((spath, weapon));
 						string name = weapon.LocalizedNameFileRef.GetFileContents(fs, path);
-						logs?.WriteLine("Found weapon: " + name);
+						//logs?.WriteLine("Found weapon: " + name);
 					} catch (Exception e)
 					{
 						logs?.WriteLine("Error: " + e.Message, Color.Red);
@@ -186,11 +196,23 @@ namespace ZipFileSystem
 			return null;
 		}
 
+		public class DamageLevelsClass
+		{
+            [XmlElement(ElementName = "Item")]
+            public DamageLevelItem[] Items;
+		}
+
+		public class DamageLevelItem
+		{
+			public float DamageHP;
+			public FileRef? VisObj;
+		}
+
 		public class PlatformsClass
 		{
 
 			[XmlElement(ElementName ="Item")]
-			public Item1[] Items;
+			public Item1[]? Items;
 
 			public class Item1
 			{

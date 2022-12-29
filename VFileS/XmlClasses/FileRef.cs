@@ -15,6 +15,25 @@ namespace ZipFileSystem
         [XmlAttribute("href")]
         public string href;
 
+        public bool RefFileExists(IVirtualFileSystem fs, string rootDir=null, bool removeExt=true) {
+            if (string.IsNullOrEmpty(href) || string.IsNullOrEmpty(href.Trim()))
+                return false;
+            string hreff = (href.Trim()[0] == '\\' || href.Trim()[0] == '/' ? href.Substring(1) : href).Replace("\\", "/");
+            if (removeExt)
+            {
+                int inx = hreff.LastIndexOf('#');
+                if (inx > -1)
+                    hreff = hreff.Substring(0, hreff.Length - (hreff.Length - inx));
+            }
+            hreff = hreff.Replace('\\', '/');
+            string dir = Path.Combine(rootDir, hreff).Replace("\\", "/");
+            if (fs.ContainsFile(dir))
+                return true;
+            if (fs.ContainsFile(hreff))
+                return true;
+            return false;
+        }
+
         string fc = null;
         public string GetFileContents(IVirtualFileSystem fs, string rootDir = null, bool removeExt=true, ILogger? logger = null)
         {
@@ -32,13 +51,25 @@ namespace ZipFileSystem
                 if(inx > -1)
                     hreff = hreff.Substring(0, hreff.Length - (hreff.Length - inx));
             }
-            hreff = hreff.Replace('\\', '/');
-            string dir = Path.Combine(rootDir, hreff).Replace("\\", "/");
-            fc = fs.ReadTextFile(dir);
+            hreff = hreff.Replace('\\', '/').ToLower();
+            string dir = Path.Combine(rootDir.ToLower(), hreff).Replace("\\", "/");
+            try
+            {
+                fc = fs.ReadTextFile(dir);
+            } catch(Exception e)
+            {
+                logger?.WriteLine("Error: " + e.Message);
+            }
             if (fc != null)
                 return fc;
             logger?.WriteLine($"Failed getting file on path: {dir}, it might not exist!");
-            fc = fs.ReadTextFile(hreff);
+            try
+            {
+                fc = fs.ReadTextFile(hreff);
+            } catch(Exception e)
+            {
+                logger?.WriteLine("Error: " + e.Message);
+            }
             if (fc != null)
                 return fc;
             throw new FileNotFoundException(hreff);
@@ -61,8 +92,8 @@ namespace ZipFileSystem
                 if (inx > -1)
                     hreff = hreff.Substring(0, hreff.Length - (hreff.Length - inx));
             }
-            hreff = hreff.Replace('\\', '/');
-            string dir = Path.Combine(rootDir, hreff).Replace("\\", "/");
+            hreff = hreff.Replace('\\', '/').ToLower();
+            string dir = Path.Combine(rootDir.ToLower(), hreff).Replace("\\", "/");
             binfc = fs.ReadFileBytes(dir);
             if (binfc != null)
                 return binfc;

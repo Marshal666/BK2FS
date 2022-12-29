@@ -70,6 +70,16 @@ namespace ZipFileSystem
             return ret;
         }
 
+        public string[] GetAllFiles()
+        {
+            List<string> ret = new List<string>();
+            foreach(var s in Systems)
+            {
+                ret.AddRange(s.GetAllFiles());
+            }
+            return ret.ToHashSet().ToArray();
+        }
+
         public string GetFileSource(string path)
         {
             string ret = null;

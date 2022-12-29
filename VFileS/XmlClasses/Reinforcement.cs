@@ -28,6 +28,9 @@ namespace ZipFileSystem
             {
                 public FileRef MechUnit;
                 public FileRef Squad;
+
+                public bool IsMechUnit { get => !string.IsNullOrEmpty(MechUnit.FormattedRef); }
+                public bool IsSquad { get => !string.IsNullOrEmpty(Squad.FormattedRef); }
             }
         }
 

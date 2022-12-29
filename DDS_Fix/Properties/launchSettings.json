@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "VFileS": {
+    "DDS_Fix": {
       "commandName": "Project",
       "commandLineArgs": "\"D:\\Games\\Blitzkrieg 2 -  Total Conversion\\Data\""
     }

@@ -61,6 +61,18 @@ namespace ZipFileSystem
             return fc.LastWriteTimeUtc;
         }
 
+        public string[] GetAllFiles()
+        {
+            List<string> ret = new List<string>();
+            foreach (var d in Dirs)
+            {
+                var fs = Directory.GetFiles(d);
+                foreach (var f in fs)
+                    ret.Add(f.FormattedPath());
+            }
+            return ret.ToArray();
+        }
+
         public string GetFileSource(string path)
         {
             return "folder: " + Path.GetFullPath(path);

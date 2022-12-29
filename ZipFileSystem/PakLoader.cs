@@ -29,7 +29,10 @@ namespace ZipFileSystem
 
         public void OpenDirectory(string dir)
         {
-            foreach(var f in Directory.GetFiles(dir, "*.pak"))
+            var files = Directory.GetFiles(dir, "*.pak");
+            Array.Sort(files);
+            Array.Reverse(files);
+            foreach(var f in files)
             {
                 try
                 {
@@ -142,6 +145,11 @@ namespace ZipFileSystem
                 var r = Stream.Name;
                 return "pak: " + r;
             }
+        }
+
+        public string[] GetAllFiles()
+        {
+            return ZipEntries.Keys.ToArray();
         }
     }
 

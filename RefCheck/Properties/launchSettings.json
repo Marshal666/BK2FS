@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RefCheck": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\Steam Library Games\\steamapps\\common\\Blitzkrieg 2 Anthology\\Blitzkrieg 2 - Fall of the Reich\\data\"\r\n\"D:\\Steam Library Games\\steamapps\\common\\Blitzkrieg 2 Anthology\\Blitzkrieg 2 - Fall of the Reich\\mods\\Universal MOD-18 Nytest Pre I\""
+    }
+  }
+}

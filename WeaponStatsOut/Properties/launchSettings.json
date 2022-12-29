@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WeaponStatsOut": {
+      "commandName": "Project",
+      "commandLineArgs": "-d \"D:\\Games\\Blitzkrieg 2\\EXE\\Data\" -m \"D:\\Games\\Blitzkrieg 2\\EXE\\Mods\\MPMod\" -o \"Output\""
+    }
+  }
+}

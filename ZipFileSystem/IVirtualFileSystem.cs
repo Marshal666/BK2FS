@@ -26,5 +26,7 @@ namespace ZipFileSystem
 
         string GetFileSource(string path);
 
+        string[] GetAllFiles();
+
     }
 }
