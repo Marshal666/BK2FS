@@ -44,15 +44,9 @@
             button4 = new Button();
             MasterFolderTextBox = new TextBox();
             TranslatingGroupBox = new GroupBox();
-            button5 = new Button();
-            groupBox2 = new GroupBox();
-            richTextBox3 = new RichTextBox();
-            groupBox1 = new GroupBox();
-            richTextBox2 = new RichTextBox();
+            TranslatingFlowUIPanel = new FlowLayoutPanel();
             OriginalTextTextBox = new RichTextBox();
             TextsCountLabel = new Label();
-            groupBox6 = new GroupBox();
-            richTextBox1 = new RichTextBox();
             button8 = new Button();
             FilePathLabel = new Label();
             button7 = new Button();
@@ -62,14 +56,12 @@
             StartTranslatingButton = new Button();
             LanguagesLayout = new FlowLayoutPanel();
             folderBrowserDialog1 = new FolderBrowserDialog();
+            EditCurrentIndexButton = new Button();
             InputModGroupBox.SuspendLayout();
             GameDataGroupBox.SuspendLayout();
             AddLanguagesGroupBox.SuspendLayout();
             OutputMasterGroupBox.SuspendLayout();
             TranslatingGroupBox.SuspendLayout();
-            groupBox2.SuspendLayout();
-            groupBox1.SuspendLayout();
-            groupBox6.SuspendLayout();
             SuspendLayout();
             // 
             // InputModGroupBox
@@ -195,16 +187,15 @@
             // 
             // TranslatingGroupBox
             // 
-            TranslatingGroupBox.Controls.Add(button5);
-            TranslatingGroupBox.Controls.Add(groupBox2);
-            TranslatingGroupBox.Controls.Add(groupBox1);
+            TranslatingGroupBox.Controls.Add(EditCurrentIndexButton);
+            TranslatingGroupBox.Controls.Add(TranslatingFlowUIPanel);
             TranslatingGroupBox.Controls.Add(OriginalTextTextBox);
             TranslatingGroupBox.Controls.Add(TextsCountLabel);
-            TranslatingGroupBox.Controls.Add(groupBox6);
             TranslatingGroupBox.Controls.Add(button8);
             TranslatingGroupBox.Controls.Add(FilePathLabel);
             TranslatingGroupBox.Controls.Add(button7);
             TranslatingGroupBox.Dock = DockStyle.Bottom;
+            TranslatingGroupBox.Enabled = false;
             TranslatingGroupBox.Location = new Point(0, 335);
             TranslatingGroupBox.Name = "TranslatingGroupBox";
             TranslatingGroupBox.Size = new Size(837, 438);
@@ -213,52 +204,13 @@
             TranslatingGroupBox.Text = "Translating";
             toolTip1.SetToolTip(TranslatingGroupBox, "Translation is done here");
             // 
-            // button5
+            // TranslatingFlowUIPanel
             // 
-            button5.Font = new Font("Segoe UI", 10F);
-            button5.Location = new Point(680, 28);
-            button5.Name = "button5";
-            button5.Size = new Size(23, 23);
-            button5.TabIndex = 10;
-            button5.Text = "↻";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
-            // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(richTextBox3);
-            groupBox2.Location = new Point(418, 168);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(200, 107);
-            groupBox2.TabIndex = 9;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Russian";
-            // 
-            // richTextBox3
-            // 
-            richTextBox3.Location = new Point(6, 22);
-            richTextBox3.Name = "richTextBox3";
-            richTextBox3.Size = new Size(188, 79);
-            richTextBox3.TabIndex = 0;
-            richTextBox3.Text = "New text translation";
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(richTextBox2);
-            groupBox1.Location = new Point(212, 168);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(200, 107);
-            groupBox1.TabIndex = 5;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "English";
-            // 
-            // richTextBox2
-            // 
-            richTextBox2.Location = new Point(6, 22);
-            richTextBox2.Name = "richTextBox2";
-            richTextBox2.Size = new Size(188, 79);
-            richTextBox2.TabIndex = 0;
-            richTextBox2.Text = "New text translation";
+            TranslatingFlowUIPanel.Location = new Point(6, 168);
+            TranslatingFlowUIPanel.Name = "TranslatingFlowUIPanel";
+            TranslatingFlowUIPanel.Size = new Size(825, 228);
+            TranslatingFlowUIPanel.TabIndex = 11;
+            toolTip1.SetToolTip(TranslatingFlowUIPanel, "Here you can edit language specific texts");
             // 
             // OriginalTextTextBox
             // 
@@ -269,47 +221,32 @@
             OriginalTextTextBox.TabIndex = 8;
             OriginalTextTextBox.TabStop = false;
             OriginalTextTextBox.Text = "ORIGINAL TEXT: og file text";
+            toolTip1.SetToolTip(OriginalTextTextBox, "Original files' text");
             // 
             // TextsCountLabel
             // 
             TextsCountLabel.AutoSize = true;
-            TextsCountLabel.Location = new Point(709, 36);
+            TextsCountLabel.Location = new Point(719, 32);
             TextsCountLabel.Name = "TextsCountLabel";
             TextsCountLabel.Size = new Size(112, 15);
             TextsCountLabel.TabIndex = 7;
             TextsCountLabel.Text = "TEXTS COUNT: ??/??";
             // 
-            // groupBox6
-            // 
-            groupBox6.Controls.Add(richTextBox1);
-            groupBox6.Location = new Point(6, 168);
-            groupBox6.Name = "groupBox6";
-            groupBox6.Size = new Size(200, 107);
-            groupBox6.TabIndex = 4;
-            groupBox6.TabStop = false;
-            groupBox6.Text = "German";
-            // 
-            // richTextBox1
-            // 
-            richTextBox1.Location = new Point(6, 22);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(188, 79);
-            richTextBox1.TabIndex = 0;
-            richTextBox1.Text = "New text translation";
-            // 
             // button8
             // 
-            button8.Location = new Point(310, 402);
+            button8.Location = new Point(329, 402);
             button8.Name = "button8";
             button8.Size = new Size(90, 30);
             button8.TabIndex = 3;
             button8.Text = "← Previous";
+            toolTip1.SetToolTip(button8, "Previous file to translate (Ctrl + Y)");
             button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
             // 
             // FilePathLabel
             // 
             FilePathLabel.AutoSize = true;
-            FilePathLabel.Location = new Point(6, 36);
+            FilePathLabel.Location = new Point(59, 32);
             FilePathLabel.Name = "FilePathLabel";
             FilePathLabel.Size = new Size(183, 15);
             FilePathLabel.TabIndex = 1;
@@ -317,12 +254,14 @@
             // 
             // button7
             // 
-            button7.Location = new Point(406, 402);
+            button7.Location = new Point(425, 402);
             button7.Name = "button7";
             button7.Size = new Size(90, 30);
             button7.TabIndex = 0;
             button7.Text = "Next →";
+            toolTip1.SetToolTip(button7, "Next file to translate (Ctrl + X)");
             button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
             // 
             // CreateFoldersButton
             // 
@@ -342,7 +281,7 @@
             ClearLanguagesButton.Size = new Size(169, 29);
             ClearLanguagesButton.TabIndex = 6;
             ClearLanguagesButton.Text = "Clear languages";
-            toolTip1.SetToolTip(ClearLanguagesButton, "Clears all languages and disabled translation part");
+            toolTip1.SetToolTip(ClearLanguagesButton, "Clears all languages and disabled translation part (it does not delete existing folders)");
             ClearLanguagesButton.UseVisualStyleBackColor = true;
             ClearLanguagesButton.Click += button6_Click;
             // 
@@ -376,6 +315,16 @@
             LanguagesLayout.Size = new Size(667, 50);
             LanguagesLayout.TabIndex = 2;
             // 
+            // EditCurrentIndexButton
+            // 
+            EditCurrentIndexButton.Location = new Point(6, 28);
+            EditCurrentIndexButton.Name = "EditCurrentIndexButton";
+            EditCurrentIndexButton.Size = new Size(47, 22);
+            EditCurrentIndexButton.TabIndex = 12;
+            EditCurrentIndexButton.Text = "...";
+            EditCurrentIndexButton.UseVisualStyleBackColor = true;
+            EditCurrentIndexButton.Click += EditCurrentIndexButton_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -393,11 +342,14 @@
             Controls.Add(InputModGroupBox);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             MaximizeBox = false;
             MaximumSize = new Size(853, 812);
             MinimumSize = new Size(853, 812);
             Name = "Form1";
             Text = "BK2 Mod Translator Tool";
+            FormClosing += Form1_FormClosing;
+            KeyDown += Form1_KeyDown;
             InputModGroupBox.ResumeLayout(false);
             InputModGroupBox.PerformLayout();
             GameDataGroupBox.ResumeLayout(false);
@@ -408,9 +360,6 @@
             OutputMasterGroupBox.PerformLayout();
             TranslatingGroupBox.ResumeLayout(false);
             TranslatingGroupBox.PerformLayout();
-            groupBox2.ResumeLayout(false);
-            groupBox1.ResumeLayout(false);
-            groupBox6.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -437,16 +386,11 @@
         private Button button7;
         private Label FilePathLabel;
         private Button button8;
-        private GroupBox groupBox6;
         private Label TextsCountLabel;
         private Button OpenExistingFolderButton;
         private Button StartTranslatingButton;
         private RichTextBox OriginalTextTextBox;
-        private RichTextBox richTextBox1;
-        private GroupBox groupBox2;
-        private RichTextBox richTextBox3;
-        private GroupBox groupBox1;
-        private RichTextBox richTextBox2;
-        private Button button5;
+        private FlowLayoutPanel TranslatingFlowUIPanel;
+        private Button EditCurrentIndexButton;
     }
 }

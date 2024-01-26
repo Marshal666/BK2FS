@@ -36,50 +36,71 @@ namespace BK2_mod_translate_tool
             App.Instance.AddLanguage(language, LanguagesLayout, toolTip1);
         }
 
-        void UpdateCountLabel()
+        public void UpdateCountLabel()
         {
-            if (App.Instance.data != null)
+            if (App.Instance.editingData != null)
             {
-                int count = Directory.EnumerateFiles(
-                    Path.Combine(App.Instance.data.MasterFolder, Utils.OriginalFolderName), "*.txt", SearchOption.AllDirectories
-                    ).Count();
-                TextsCountLabel.Text = $"TEXTS COUNT: {App.Instance.data.CurrentFile}/{count}";
+                TextsCountLabel.Text = $"TEXTS COUNT: {App.Instance.workingData.CurrentFile + 1}/{App.Instance.workingData.Files.Length}";
             }
         }
 
-        public void SwitchToTranslation()
+        public void SwitchToTranslation(int currentFile = 0)
         {
             SetControlGroupEnabled(EarlyInputControls, false);
             TranslatingGroupBox.Enabled = true;
+            CreateFoldersButton.Enabled = false;
+            App.Instance.LoadFolderFiles();
+            App.Instance.SwitchEditFileAtIndex(currentFile, false);
         }
 
         public void SwitchToFolderTransfer()
         {
             SetControlGroupEnabled(EarlyInputControls, true);
             TranslatingGroupBox.Enabled = false;
+            TranslationButton.Enabled = false;
+            CreateFoldersButton.Enabled = true;
         }
+
+        public Dictionary<string, RichTextBox> LanguageInputs = new Dictionary<string, RichTextBox>();
 
         public void AddLanguageTranslationUI(string language)
         {
-            //// 
-            //// groupBox6
-            //// 
-            //groupBox6.Controls.Add(richTextBox1);
-            //groupBox6.Location = new Point(6, 168);
-            //groupBox6.Name = "groupBox6";
-            //groupBox6.Size = new Size(200, 107);
-            //groupBox6.TabIndex = 4;
-            //groupBox6.TabStop = false;
-            //groupBox6.Text = "German";
-            //// 
-            //// richTextBox1
-            //// 
-            //richTextBox1.Location = new Point(6, 22);
-            //richTextBox1.Name = "richTextBox1";
-            //richTextBox1.Size = new Size(188, 79);
-            //richTextBox1.TabIndex = 0;
-            //richTextBox1.Text = "New text translation";
 
+            RichTextBox rbt = new RichTextBox();
+            rbt.Size = new Size(188, 79);
+            rbt.TabIndex = 0;
+            rbt.Text = "";
+            rbt.Location = new Point(6, 22);
+
+            LanguageInputs.Add(language, rbt);
+
+            GroupBox gb = new GroupBox();
+            gb.Size = new Size(200, 107);
+            gb.TabIndex = 4;
+            gb.TabStop = false;
+            gb.Text = language;
+            gb.Controls.Add(rbt);
+
+            TranslatingFlowUIPanel.Controls.Add(gb);
+
+        }
+
+        public void RemoveLanguageTranslationUI(string language)
+        {
+            GroupBox gb = null;
+            foreach (var control in TranslatingFlowUIPanel.Controls)
+            {
+                if (control is GroupBox box && box.Text == language)
+                {
+                    gb = box;
+                    break;
+                }
+            }
+            if (gb != null)
+            {
+                TranslatingFlowUIPanel.Controls.Remove(gb);
+                LanguageInputs.Remove(language);
+            }
         }
 
         #endregion
@@ -90,7 +111,13 @@ namespace BK2_mod_translate_tool
 
         public FlowLayoutPanel LanguagesLayoutPanel => LanguagesLayout;
 
+        public FlowLayoutPanel TranslationLayoutPanel => TranslatingFlowUIPanel;
+
         public ToolTip ToolTip => toolTip1;
+
+        public Label TranslatingFilePathLabel => FilePathLabel;
+
+        public RichTextBox TranslatingFileTextBox => OriginalTextTextBox;
 
         public Form1()
         {
@@ -159,14 +186,51 @@ namespace BK2_mod_translate_tool
         private void OpenExistingFolderButton_Click(object sender, EventArgs e)
         {
             var res = folderBrowserDialog1.ShowDialog();
-            if(res == DialogResult.OK)
+            if (res == DialogResult.OK)
             {
                 string path = Path.Combine(folderBrowserDialog1.SelectedPath, App.ConfigFile);
-                if(File.Exists(path))
+                if (File.Exists(path))
                 {
                     App.Instance.LoadData(path);
                 }
             }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            App.Instance.IncrementEditingIndex();
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            App.Instance.DecrementEditingIndex();
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            //MessageBox.Show("key down");
+            if (e.KeyCode == Keys.Y && e.Control)
+            {
+                App.Instance.DecrementEditingIndex();
+            }
+            if (e.KeyCode == Keys.X && e.Control)
+            {
+                App.Instance.IncrementEditingIndex();
+            }
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            App.Instance.SaveEditingState();
+        }
+
+        private void EditCurrentIndexButton_Click(object sender, EventArgs e)
+        {
+            var f2 = new Form2();
+            //this.TopMost = false;
+            //f2.TopMost = true;
+            f2.Init();
+            f2.ShowDialog();
         }
     }
 }

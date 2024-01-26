@@ -46,7 +46,17 @@ namespace BK2_mod_translate_tool
             }
         }
 
-        public EditingData data;
+        public EditingData editingData;
+
+        public class WorkingData
+        {
+            public string[] Files { get; set; }
+            public int CurrentFile { get; set; } = 0;
+
+            public string CurrentFilePath => Files[CurrentFile];
+        }
+
+        public WorkingData workingData;
 
         static App instance;
 
@@ -90,8 +100,9 @@ namespace BK2_mod_translate_tool
                     tooltip.SetToolTip(nb, $"Remove {language} from the list");
                 }
                 nb.Text = $"- {language}";
-                nb.Click += (s, e) => { RemoveLanguage(language); layout.Controls.Remove(nb); };
+                nb.Click += (s, e) => { RemoveLanguage(language); layout.Controls.Remove(nb); form.RemoveLanguageTranslationUI(language); };
                 layout.Controls.Add(nb);
+                form.AddLanguageTranslationUI(language);
             }
         }
 
@@ -102,19 +113,26 @@ namespace BK2_mod_translate_tool
 
         public void ClearLanguages(FlowLayoutPanel layout)
         {
+            SaveEdits();
+            SaveEditingState();
             layout.Controls.Clear();
+            form.TranslationLayoutPanel.Controls.Clear();
+            form.LanguageInputs.Clear();
             languages.Clear();
+            editingData = null;
+            form.SwitchToFolderTransfer();
         }
 
         public void LoadData(string file)
         {
-            data = EditingData.LoadFromJSON(file);
-            form.SwitchToTranslation();
+            editingData = EditingData.LoadFromJSON(file);
 
-            foreach(string language in data.Languages)
+            foreach (string language in editingData.Languages)
             {
                 AddLanguage(language, form.LanguagesLayoutPanel, form.ToolTip);
             }
+
+            form.SwitchToTranslation(editingData.CurrentFile);
         }
 
         public void CreateFolderStructure(string modFolder, string dataFolder, string masterFolder)
@@ -156,9 +174,9 @@ namespace BK2_mod_translate_tool
 
             form.TranslationButton.Enabled = true;
 
-            data = new EditingData(Languages.ToArray(), 0, modFolder, dataFolder, masterFolder);
+            editingData = new EditingData(Languages.ToArray(), 0, modFolder, dataFolder, masterFolder);
 
-            data.SaveToJSON(Path.Combine(masterFolder, ConfigFile));
+            editingData.SaveToJSON(Path.Combine(masterFolder, ConfigFile));
 
             MessageBox.Show($"Folder structure created in: \"{masterFolder}\"", "Success");
 
@@ -179,6 +197,90 @@ namespace BK2_mod_translate_tool
                 }
             }
 
+        }
+
+        public void LoadFolderFiles()
+        {
+            if (editingData == null)
+                return;
+            string path = Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName);
+            var files = Directory.EnumerateFiles(path, "*.txt", SearchOption.AllDirectories).ToArray();
+
+            workingData = new WorkingData();
+
+            workingData.CurrentFile = 0;
+            workingData.Files = files;
+        }
+
+        public void SaveEditingState()
+        {
+            if(editingData == null) return;
+            if(workingData == null) return;
+            editingData.CurrentFile = workingData.CurrentFile;
+            editingData.SaveToJSON(Path.Combine(editingData.MasterFolder, ConfigFile));
+        }
+
+        public void SwitchEditFileAtIndex(int index, bool save = true)
+        {
+            if(workingData == null) 
+                return;
+            if (save)
+                SaveEdits();
+            index = Math.Clamp(index, 0, workingData.Files.Length - 1);
+            workingData.CurrentFile = index;
+            form.TranslatingFilePathLabel.Text = Path.GetRelativePath(Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName), workingData.Files[index]);
+            form.TranslatingFileTextBox.Text = File.ReadAllText(workingData.Files[index]);
+            form.UpdateCountLabel();
+            LoadFileStates();
+        }
+
+        public void IncrementEditingIndex()
+        {
+            if (workingData == null)
+                return;
+            SwitchEditFileAtIndex(workingData.CurrentFile + 1);
+        }
+
+        public void DecrementEditingIndex()
+        {
+            if (workingData == null)
+                return;
+            SwitchEditFileAtIndex(workingData.CurrentFile - 1);
+        }
+
+        public void SaveEdits()
+        {
+            var inputs = form.LanguageInputs;
+            if(inputs.Count != editingData.Languages.Length)
+            {
+                MessageBox.Show("Shit happened.. bruh", "Fatal error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+            string fp = Path.GetRelativePath(Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName), workingData.CurrentFilePath);
+            foreach (var lang in inputs.Keys)
+            {
+                string path = Path.Combine(editingData.MasterFolder, lang, fp);
+                string data = File.ReadAllText(path);
+                if (inputs[lang].Text != data)
+                    File.WriteAllText(path, inputs[lang].Text, Encoding.Unicode);
+            }
+        }
+
+        public void LoadFileStates()
+        {
+            var inputs = form.LanguageInputs;
+            if (inputs.Count != editingData.Languages.Length)
+            {
+                MessageBox.Show("Something went wrong.. bruh", "Fatal error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+            string fp = Path.GetRelativePath(Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName), workingData.CurrentFilePath);
+            foreach (var lang in inputs.Keys)
+            {
+                string path = Path.Combine(editingData.MasterFolder, lang, fp);
+                string data = File.ReadAllText(path);
+                inputs[lang].Text = data;
+            }
         }
 
     }
