@@ -84,32 +84,16 @@ class Program
                         if (stats == null)
                             continue;
 
-                        //get weapons
-                        (string, WeaponRPGStats)[] weapons = stats.GetWeapons(FileSystem, logs:cl);
-
-                        foreach(var weapon in weapons)
-                        {
-                            if(!DoneWeapons.Contains(weapon.Item1))
-                            {
-                                DoneWeapons.Add(weapon.Item1);
-                                WriteWeaponInfo(weapon.Item1, weapon.Item2);
-                            }
-                        }
+                        WriteMechUnitWeapons(stats);
 
                     }
                     else if (!string.IsNullOrEmpty(unit.Squad.FormattedRef))
                     {
                         SquadRPGStats stats = (SquadRPGStats)squadSer.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
-                        string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
-                        if (!string.IsNullOrWhiteSpace(name))
+                        foreach(var member in stats.members.Items)
                         {
-                            if (units.Keys.Contains(name))
-                                units[name]++;
-                            else
-                                units[name] = 1;
-                            //sb.Append("            ");
-                            //sb.Append(name);
-                            //sb.Append('\n');
+                            InfantryRPGStats soldier = (InfantryRPGStats)member.ReadXMLObject(typeof(InfantryRPGStats), FileSystem);
+                            WriteInfantryUnitWeapons(soldier);
                         }
                     }
                 }
@@ -148,6 +132,7 @@ class Program
                                     stats = (MechUnitRPGStats)mechStatsSer.Deserialize(ss);
                                     if (stats == null)
                                         continue;
+                                    WriteMechUnitWeapons(stats);
                                 }
                                 catch (Exception ex)
                                 {
@@ -157,18 +142,8 @@ class Program
                                     //        $"nation: {side.NameFileRef.GetFileContents(FileSystem)} - " +
                                     //        $"reinf file: {reinfs.FormattedRef}");
                                     //}
+                                    cl.WriteLine("Error: " + ex.Message);
                                     continue;
-                                }
-                                string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
-                                if (!string.IsNullOrWhiteSpace(name))
-                                {
-                                    if (units.Keys.Contains(name))
-                                        units[name]++;
-                                    else
-                                        units[name] = 1;
-                                    //sb.Append("                ");
-                                    //sb.Append(name);
-                                    //sb.Append('\n');
                                 }
                             }
                             else if (!string.IsNullOrEmpty(unit.Squad.FormattedRef))
@@ -180,18 +155,13 @@ class Program
                                 }
                                 catch (Exception ex)
                                 {
+                                    cl.WriteLine("Error: " + ex.Message);
                                     continue;
                                 }
-                                string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
-                                if (!string.IsNullOrWhiteSpace(name))
+                                foreach (var member in stats.members.Items)
                                 {
-                                    if (units.Keys.Contains(name))
-                                        units[name]++;
-                                    else
-                                        units[name] = 1;
-                                    //sb.Append("                ");
-                                    //sb.Append(name);
-                                    //sb.Append('\n');
+                                    InfantryRPGStats soldier = (InfantryRPGStats)member.ReadXMLObject(typeof(InfantryRPGStats), FileSystem);
+                                    WriteInfantryUnitWeapons(soldier);
                                 }
                             }
                         }
@@ -199,6 +169,34 @@ class Program
                     ix = 0;
                 }
                 inx++;
+            }
+        }
+
+        void WriteMechUnitWeapons(MechUnitRPGStats stats)
+        {
+            (string, WeaponRPGStats)[] weapons = stats.GetWeapons(FileSystem, logs: cl);
+
+            foreach (var weapon in weapons)
+            {
+                if (!DoneWeapons.Contains(weapon.Item1))
+                {
+                    DoneWeapons.Add(weapon.Item1);
+                    WriteWeaponInfo(weapon.Item1, weapon.Item2);
+                }
+            }
+        }
+
+        void WriteInfantryUnitWeapons(InfantryRPGStats stats)
+        {
+            (string, WeaponRPGStats)[] weapons = stats.GetWeapons(FileSystem, logs: cl);
+
+            foreach (var weapon in weapons)
+            {
+                if (!DoneWeapons.Contains(weapon.Item1))
+                {
+                    DoneWeapons.Add(weapon.Item1);
+                    WriteWeaponInfo(weapon.Item1, weapon.Item2);
+                }
             }
         }
 
@@ -211,15 +209,15 @@ class Program
             StringBuilder sb = new StringBuilder();
             sb.Append(weaponName);
             sb.Append(Environment.NewLine);
-            sb.Append($"Range: {weapon.RangeMax}");
+            sb.Append($"Range:\t\t{weapon.RangeMax}");
             sb.Append(Environment.NewLine);
-            sb.Append($"Dispersion: {weapon.Dispersion}");
+            sb.Append($"Dispersion:\t\t{weapon.Dispersion}");
             sb.Append(Environment.NewLine);
-            sb.Append($"Aim time: {weapon.AimingTime} s");
+            sb.Append($"Aim time:\t\t{weapon.AimingTime} s");
             sb.Append(Environment.NewLine);
             if(weapon.AmmoPerBurst != 1)
             {
-                sb.Append($"Volley shots: {weapon.AmmoPerBurst}");
+                sb.Append($"Volley shots:\t\t{weapon.AmmoPerBurst}");
                 sb.Append(Environment.NewLine);
             }
             if (weapon.shells.Items != null && weapon.shells.Items != null)
@@ -233,15 +231,15 @@ class Program
                     sb.Append(Environment.NewLine);
                     sb.Append($"\tDamage:\t\t\t\t{shell.DamagePower} +- {shell.DamageRandom}");
                     sb.Append(Environment.NewLine);
-                    sb.Append($"\tPercing:\t\t\t{shell.Piercing} + {shell.PiercingRandom}");
+                    sb.Append($"\tPercing:\t\t\t\t{shell.Piercing} + {shell.PiercingRandom}");
                     sb.Append(Environment.NewLine);
-                    sb.Append($"\tStrong explosion area:\t\t{shell.Area}");
+                    sb.Append($"\tStrong explosion area:\t\t\t\t{shell.Area}");
                     sb.Append(Environment.NewLine);
-                    sb.Append($"\tSoft explosion area:\t\t{shell.Area2}");
+                    sb.Append($"\tSoft explosion area:\t\t\t\t{shell.Area2}");
                     sb.Append(Environment.NewLine);
-                    sb.Append($"\tTracking chance:\t\t{shell.BrokeTrackProbability}%");
+                    sb.Append($"\tTracking chance:\t\t\t\t{shell.BrokeTrackProbability}%");
                     sb.Append(Environment.NewLine);
-                    sb.Append($"\tReload time:\t\t\t{shell.RelaxTime} s");
+                    sb.Append($"\tReload time:\t\t\t\t{shell.RelaxTime} s");
                     sb.Append(Environment.NewLine);
                     if (weapon.AmmoPerBurst != 1)
                     {
@@ -249,10 +247,12 @@ class Program
                     }
                 }
             }
+            if (!FileSystem.ContainsFile(namePath))
+                Console.WriteLine("File not found: " + namePath);
             string dir = Path.GetDirectoryName(outputPath);
             if(!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
-            File.WriteAllText(outputPath, sb.ToString());
+            File.WriteAllText(outputPath, sb.ToString(), Encoding.Unicode);
         }
 
     }

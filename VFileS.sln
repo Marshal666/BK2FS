@@ -15,7 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDS_MipMap_Fix", "DDS_mipMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDS_Fix", "DDS_Fix\DDS_Fix.csproj", "{1F8C5E24-0268-412E-BDCD-660AFA6D9F62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeaponStatsOut", "WeaponStatsOut\WeaponStatsOut.csproj", "{EA730C00-0AE3-4098-8830-B281BAC7E459}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WeaponStatsOut", "WeaponStatsOut\WeaponStatsOut.csproj", "{EA730C00-0AE3-4098-8830-B281BAC7E459}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitNationsCheck", "UnitNationsCheck\UnitNationsCheck.csproj", "{1D8B71F0-C67C-408A-AF45-D16B1311A203}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BK2_mod_translate_tool", "BK2_mod_translate_tool\BK2_mod_translate_tool.csproj", "{2FC3235B-10BC-4DE6-A794-10C391F757DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +55,14 @@ Global
 		{EA730C00-0AE3-4098-8830-B281BAC7E459}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA730C00-0AE3-4098-8830-B281BAC7E459}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA730C00-0AE3-4098-8830-B281BAC7E459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D8B71F0-C67C-408A-AF45-D16B1311A203}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D8B71F0-C67C-408A-AF45-D16B1311A203}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D8B71F0-C67C-408A-AF45-D16B1311A203}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D8B71F0-C67C-408A-AF45-D16B1311A203}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2FC3235B-10BC-4DE6-A794-10C391F757DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2FC3235B-10BC-4DE6-A794-10C391F757DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2FC3235B-10BC-4DE6-A794-10C391F757DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2FC3235B-10BC-4DE6-A794-10C391F757DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

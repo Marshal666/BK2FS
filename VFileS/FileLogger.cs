@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZipFileSystem;
 
-class FileLogger : ILogger
+public class FileLogger : ILogger
 {
 
     FileStream f;

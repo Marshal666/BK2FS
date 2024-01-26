@@ -117,7 +117,7 @@ namespace ZipFileSystem
 					WeaponRPGStats weapon = (WeaponRPGStats)gun.Weapon.ReadXMLObject(typeof(WeaponRPGStats), fs, rootDir);
 					ret.Add((spath, weapon));
 					string name = weapon.LocalizedNameFileRef.GetFileContents(fs, path);
-					logs?.WriteLine("Found soldier weapon: " + name);
+					//logs?.WriteLine("Found soldier weapon: " + name);
 				}
 				catch (Exception e)
 				{

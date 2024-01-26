@@ -2,7 +2,7 @@
   "profiles": {
     "FileReader": {
       "commandName": "Project",
-      "commandLineArgs": "\"D:\\Games\\Blitzkrieg 2 -  Total Conversion\\Data\""
+      "commandLineArgs": "\"C:\\Program Files (x86)\\Blitzkrieg 2 -  Total Conversion\\Data\""
     }
   }
 }
