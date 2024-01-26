@@ -66,9 +66,10 @@ namespace ZipFileSystem
             List<string> ret = new List<string>();
             foreach (var d in Dirs)
             {
-                var fs = Directory.GetFiles(d);
+                //var fs = Directory.GetFiles(d);
+                var fs = Directory.EnumerateFiles(d, "*.*", SearchOption.AllDirectories).ToArray();
                 foreach (var f in fs)
-                    ret.Add(f.FormattedPath());
+                    ret.Add(Path.GetRelativePath(d, f).FormattedPath());
             }
             return ret.ToArray();
         }

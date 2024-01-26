@@ -30,57 +30,59 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            groupBox1 = new GroupBox();
+            InputModGroupBox = new GroupBox();
             button1 = new Button();
             InputModFolderTextBox = new TextBox();
             toolTip1 = new ToolTip(components);
             button2 = new Button();
-            groupBox2 = new GroupBox();
+            GameDataGroupBox = new GroupBox();
             GameDataInputFolder = new TextBox();
-            groupBox3 = new GroupBox();
+            AddLanguagesGroupBox = new GroupBox();
             button3 = new Button();
             LanguageTextBox = new TextBox();
-            groupBox4 = new GroupBox();
+            OutputMasterGroupBox = new GroupBox();
             button4 = new Button();
             MasterFolderTextBox = new TextBox();
-            groupBox5 = new GroupBox();
+            TranslatingGroupBox = new GroupBox();
+            button5 = new Button();
+            groupBox2 = new GroupBox();
+            richTextBox3 = new RichTextBox();
+            groupBox1 = new GroupBox();
+            richTextBox2 = new RichTextBox();
+            OriginalTextTextBox = new RichTextBox();
             TextsCountLabel = new Label();
-            groupBox8 = new GroupBox();
-            textBox3 = new TextBox();
-            groupBox7 = new GroupBox();
-            textBox2 = new TextBox();
             groupBox6 = new GroupBox();
-            textBox1 = new TextBox();
+            richTextBox1 = new RichTextBox();
             button8 = new Button();
-            OriginalTextLabel = new Label();
             FilePathLabel = new Label();
             button7 = new Button();
             CreateFoldersButton = new Button();
             ClearLanguagesButton = new Button();
             OpenExistingFolderButton = new Button();
+            StartTranslatingButton = new Button();
             LanguagesLayout = new FlowLayoutPanel();
             folderBrowserDialog1 = new FolderBrowserDialog();
-            groupBox1.SuspendLayout();
+            InputModGroupBox.SuspendLayout();
+            GameDataGroupBox.SuspendLayout();
+            AddLanguagesGroupBox.SuspendLayout();
+            OutputMasterGroupBox.SuspendLayout();
+            TranslatingGroupBox.SuspendLayout();
             groupBox2.SuspendLayout();
-            groupBox3.SuspendLayout();
-            groupBox4.SuspendLayout();
-            groupBox5.SuspendLayout();
-            groupBox8.SuspendLayout();
-            groupBox7.SuspendLayout();
+            groupBox1.SuspendLayout();
             groupBox6.SuspendLayout();
             SuspendLayout();
             // 
-            // groupBox1
+            // InputModGroupBox
             // 
-            groupBox1.Controls.Add(button1);
-            groupBox1.Controls.Add(InputModFolderTextBox);
-            groupBox1.Location = new Point(12, 12);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(813, 63);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Input mod folder";
-            toolTip1.SetToolTip(groupBox1, "Mod to gather .txt files from, it's in the games \"mods\" folder");
+            InputModGroupBox.Controls.Add(button1);
+            InputModGroupBox.Controls.Add(InputModFolderTextBox);
+            InputModGroupBox.Location = new Point(12, 12);
+            InputModGroupBox.Name = "InputModGroupBox";
+            InputModGroupBox.Size = new Size(813, 63);
+            InputModGroupBox.TabIndex = 0;
+            InputModGroupBox.TabStop = false;
+            InputModGroupBox.Text = "Input mod folder";
+            toolTip1.SetToolTip(InputModGroupBox, "Mod to gather .txt files from, it's in the games \"mods\" folder");
             // 
             // button1
             // 
@@ -111,17 +113,17 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // groupBox2
+            // GameDataGroupBox
             // 
-            groupBox2.Controls.Add(button2);
-            groupBox2.Controls.Add(GameDataInputFolder);
-            groupBox2.Location = new Point(12, 81);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(813, 63);
-            groupBox2.TabIndex = 1;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Games' data folder";
-            toolTip1.SetToolTip(groupBox2, "Data folder of the game, used if mod folder doesn't have all .txt files covered");
+            GameDataGroupBox.Controls.Add(button2);
+            GameDataGroupBox.Controls.Add(GameDataInputFolder);
+            GameDataGroupBox.Location = new Point(12, 81);
+            GameDataGroupBox.Name = "GameDataGroupBox";
+            GameDataGroupBox.Size = new Size(813, 63);
+            GameDataGroupBox.TabIndex = 1;
+            GameDataGroupBox.TabStop = false;
+            GameDataGroupBox.Text = "Games' data folder";
+            toolTip1.SetToolTip(GameDataGroupBox, "Data folder of the game, used if mod folder doesn't have all .txt files covered");
             // 
             // GameDataInputFolder
             // 
@@ -130,17 +132,17 @@
             GameDataInputFolder.Size = new Size(734, 23);
             GameDataInputFolder.TabIndex = 2;
             // 
-            // groupBox3
+            // AddLanguagesGroupBox
             // 
-            groupBox3.Controls.Add(button3);
-            groupBox3.Controls.Add(LanguageTextBox);
-            groupBox3.Location = new Point(12, 150);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(140, 63);
-            groupBox3.TabIndex = 3;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Add languages";
-            toolTip1.SetToolTip(groupBox3, "Adds languages to make translations for");
+            AddLanguagesGroupBox.Controls.Add(button3);
+            AddLanguagesGroupBox.Controls.Add(LanguageTextBox);
+            AddLanguagesGroupBox.Location = new Point(12, 150);
+            AddLanguagesGroupBox.Name = "AddLanguagesGroupBox";
+            AddLanguagesGroupBox.Size = new Size(140, 63);
+            AddLanguagesGroupBox.TabIndex = 3;
+            AddLanguagesGroupBox.TabStop = false;
+            AddLanguagesGroupBox.Text = "Add languages";
+            toolTip1.SetToolTip(AddLanguagesGroupBox, "Adds languages to make translations for");
             // 
             // button3
             // 
@@ -161,17 +163,17 @@
             LanguageTextBox.TabIndex = 0;
             LanguageTextBox.KeyDown += LanguageTextBox_KeyDown;
             // 
-            // groupBox4
+            // OutputMasterGroupBox
             // 
-            groupBox4.Controls.Add(button4);
-            groupBox4.Controls.Add(MasterFolderTextBox);
-            groupBox4.Location = new Point(12, 219);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(813, 63);
-            groupBox4.TabIndex = 4;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "Output master folder";
-            toolTip1.SetToolTip(groupBox4, "Folder in which language subfolders will be created");
+            OutputMasterGroupBox.Controls.Add(button4);
+            OutputMasterGroupBox.Controls.Add(MasterFolderTextBox);
+            OutputMasterGroupBox.Location = new Point(12, 219);
+            OutputMasterGroupBox.Name = "OutputMasterGroupBox";
+            OutputMasterGroupBox.Size = new Size(813, 63);
+            OutputMasterGroupBox.TabIndex = 4;
+            OutputMasterGroupBox.TabStop = false;
+            OutputMasterGroupBox.Text = "Output master folder";
+            toolTip1.SetToolTip(OutputMasterGroupBox, "Folder in which language subfolders will be created");
             // 
             // button4
             // 
@@ -191,87 +193,109 @@
             MasterFolderTextBox.Size = new Size(734, 23);
             MasterFolderTextBox.TabIndex = 0;
             // 
-            // groupBox5
+            // TranslatingGroupBox
             // 
-            groupBox5.Controls.Add(TextsCountLabel);
-            groupBox5.Controls.Add(groupBox8);
-            groupBox5.Controls.Add(groupBox7);
-            groupBox5.Controls.Add(groupBox6);
-            groupBox5.Controls.Add(button8);
-            groupBox5.Controls.Add(OriginalTextLabel);
-            groupBox5.Controls.Add(FilePathLabel);
-            groupBox5.Controls.Add(button7);
-            groupBox5.Dock = DockStyle.Bottom;
-            groupBox5.Location = new Point(0, 335);
-            groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(837, 438);
-            groupBox5.TabIndex = 7;
-            groupBox5.TabStop = false;
-            groupBox5.Text = "Translating";
-            toolTip1.SetToolTip(groupBox5, "Translation is done here");
+            TranslatingGroupBox.Controls.Add(button5);
+            TranslatingGroupBox.Controls.Add(groupBox2);
+            TranslatingGroupBox.Controls.Add(groupBox1);
+            TranslatingGroupBox.Controls.Add(OriginalTextTextBox);
+            TranslatingGroupBox.Controls.Add(TextsCountLabel);
+            TranslatingGroupBox.Controls.Add(groupBox6);
+            TranslatingGroupBox.Controls.Add(button8);
+            TranslatingGroupBox.Controls.Add(FilePathLabel);
+            TranslatingGroupBox.Controls.Add(button7);
+            TranslatingGroupBox.Dock = DockStyle.Bottom;
+            TranslatingGroupBox.Location = new Point(0, 335);
+            TranslatingGroupBox.Name = "TranslatingGroupBox";
+            TranslatingGroupBox.Size = new Size(837, 438);
+            TranslatingGroupBox.TabIndex = 7;
+            TranslatingGroupBox.TabStop = false;
+            TranslatingGroupBox.Text = "Translating";
+            toolTip1.SetToolTip(TranslatingGroupBox, "Translation is done here");
+            // 
+            // button5
+            // 
+            button5.Font = new Font("Segoe UI", 10F);
+            button5.Location = new Point(680, 28);
+            button5.Name = "button5";
+            button5.Size = new Size(23, 23);
+            button5.TabIndex = 10;
+            button5.Text = "↻";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(richTextBox3);
+            groupBox2.Location = new Point(418, 168);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(200, 107);
+            groupBox2.TabIndex = 9;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Russian";
+            // 
+            // richTextBox3
+            // 
+            richTextBox3.Location = new Point(6, 22);
+            richTextBox3.Name = "richTextBox3";
+            richTextBox3.Size = new Size(188, 79);
+            richTextBox3.TabIndex = 0;
+            richTextBox3.Text = "New text translation";
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(richTextBox2);
+            groupBox1.Location = new Point(212, 168);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(200, 107);
+            groupBox1.TabIndex = 5;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "English";
+            // 
+            // richTextBox2
+            // 
+            richTextBox2.Location = new Point(6, 22);
+            richTextBox2.Name = "richTextBox2";
+            richTextBox2.Size = new Size(188, 79);
+            richTextBox2.TabIndex = 0;
+            richTextBox2.Text = "New text translation";
+            // 
+            // OriginalTextTextBox
+            // 
+            OriginalTextTextBox.Location = new Point(6, 54);
+            OriginalTextTextBox.Name = "OriginalTextTextBox";
+            OriginalTextTextBox.ReadOnly = true;
+            OriginalTextTextBox.Size = new Size(825, 108);
+            OriginalTextTextBox.TabIndex = 8;
+            OriginalTextTextBox.TabStop = false;
+            OriginalTextTextBox.Text = "ORIGINAL TEXT: og file text";
             // 
             // TextsCountLabel
             // 
             TextsCountLabel.AutoSize = true;
             TextsCountLabel.Location = new Point(709, 36);
             TextsCountLabel.Name = "TextsCountLabel";
-            TextsCountLabel.Size = new Size(122, 15);
+            TextsCountLabel.Size = new Size(112, 15);
             TextsCountLabel.TabIndex = 7;
-            TextsCountLabel.Text = "TEXTS COUNT: 1/6000";
-            // 
-            // groupBox8
-            // 
-            groupBox8.Controls.Add(textBox3);
-            groupBox8.Location = new Point(427, 96);
-            groupBox8.Name = "groupBox8";
-            groupBox8.Size = new Size(200, 107);
-            groupBox8.TabIndex = 6;
-            groupBox8.TabStop = false;
-            groupBox8.Text = "English";
-            // 
-            // textBox3
-            // 
-            textBox3.Location = new Point(6, 22);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(188, 23);
-            textBox3.TabIndex = 0;
-            textBox3.Text = "New Unit name";
-            // 
-            // groupBox7
-            // 
-            groupBox7.Controls.Add(textBox2);
-            groupBox7.Location = new Point(221, 96);
-            groupBox7.Name = "groupBox7";
-            groupBox7.Size = new Size(200, 107);
-            groupBox7.TabIndex = 5;
-            groupBox7.TabStop = false;
-            groupBox7.Text = "English";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(6, 22);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(188, 23);
-            textBox2.TabIndex = 0;
-            textBox2.Text = "New Unit name";
+            TextsCountLabel.Text = "TEXTS COUNT: ??/??";
             // 
             // groupBox6
             // 
-            groupBox6.Controls.Add(textBox1);
-            groupBox6.Location = new Point(6, 96);
+            groupBox6.Controls.Add(richTextBox1);
+            groupBox6.Location = new Point(6, 168);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new Size(200, 107);
             groupBox6.TabIndex = 4;
             groupBox6.TabStop = false;
             groupBox6.Text = "German";
             // 
-            // textBox1
+            // richTextBox1
             // 
-            textBox1.Location = new Point(6, 22);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(188, 23);
-            textBox1.TabIndex = 0;
-            textBox1.Text = "New Unit name";
+            richTextBox1.Location = new Point(6, 22);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new Size(188, 79);
+            richTextBox1.TabIndex = 0;
+            richTextBox1.Text = "New text translation";
             // 
             // button8
             // 
@@ -281,15 +305,6 @@
             button8.TabIndex = 3;
             button8.Text = "← Previous";
             button8.UseVisualStyleBackColor = true;
-            // 
-            // OriginalTextLabel
-            // 
-            OriginalTextLabel.AutoSize = true;
-            OriginalTextLabel.Location = new Point(6, 64);
-            OriginalTextLabel.Name = "OriginalTextLabel";
-            OriginalTextLabel.Size = new Size(205, 15);
-            OriginalTextLabel.TabIndex = 2;
-            OriginalTextLabel.Text = "ORIGINAL TEXT: original_text_file_text";
             // 
             // FilePathLabel
             // 
@@ -322,7 +337,7 @@
             // 
             // ClearLanguagesButton
             // 
-            ClearLanguagesButton.Location = new Point(187, 288);
+            ClearLanguagesButton.Location = new Point(362, 288);
             ClearLanguagesButton.Name = "ClearLanguagesButton";
             ClearLanguagesButton.Size = new Size(169, 29);
             ClearLanguagesButton.TabIndex = 6;
@@ -333,19 +348,32 @@
             // 
             // OpenExistingFolderButton
             // 
-            OpenExistingFolderButton.Location = new Point(362, 288);
+            OpenExistingFolderButton.Location = new Point(537, 288);
             OpenExistingFolderButton.Name = "OpenExistingFolderButton";
             OpenExistingFolderButton.Size = new Size(169, 29);
             OpenExistingFolderButton.TabIndex = 8;
             OpenExistingFolderButton.Text = "Open existing master folder";
             toolTip1.SetToolTip(OpenExistingFolderButton, "Use when you want to continue editing existing translation folder structure");
             OpenExistingFolderButton.UseVisualStyleBackColor = true;
+            OpenExistingFolderButton.Click += OpenExistingFolderButton_Click;
+            // 
+            // StartTranslatingButton
+            // 
+            StartTranslatingButton.Enabled = false;
+            StartTranslatingButton.Location = new Point(187, 288);
+            StartTranslatingButton.Name = "StartTranslatingButton";
+            StartTranslatingButton.Size = new Size(169, 29);
+            StartTranslatingButton.TabIndex = 9;
+            StartTranslatingButton.Text = "Start Translating";
+            toolTip1.SetToolTip(StartTranslatingButton, "Start the translation process");
+            StartTranslatingButton.UseVisualStyleBackColor = true;
+            StartTranslatingButton.Click += StartTranslatingButton_Click;
             // 
             // LanguagesLayout
             // 
-            LanguagesLayout.Location = new Point(158, 172);
+            LanguagesLayout.Location = new Point(158, 163);
             LanguagesLayout.Name = "LanguagesLayout";
-            LanguagesLayout.Size = new Size(667, 41);
+            LanguagesLayout.Size = new Size(667, 50);
             LanguagesLayout.TabIndex = 2;
             // 
             // Form1
@@ -353,15 +381,16 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(837, 773);
+            Controls.Add(StartTranslatingButton);
             Controls.Add(OpenExistingFolderButton);
-            Controls.Add(groupBox5);
+            Controls.Add(TranslatingGroupBox);
             Controls.Add(ClearLanguagesButton);
             Controls.Add(CreateFoldersButton);
-            Controls.Add(groupBox4);
-            Controls.Add(groupBox3);
+            Controls.Add(OutputMasterGroupBox);
+            Controls.Add(AddLanguagesGroupBox);
             Controls.Add(LanguagesLayout);
-            Controls.Add(groupBox2);
-            Controls.Add(groupBox1);
+            Controls.Add(GameDataGroupBox);
+            Controls.Add(InputModGroupBox);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
@@ -369,56 +398,55 @@
             MinimumSize = new Size(853, 812);
             Name = "Form1";
             Text = "BK2 Mod Translator Tool";
-            groupBox1.ResumeLayout(false);
-            groupBox1.PerformLayout();
+            InputModGroupBox.ResumeLayout(false);
+            InputModGroupBox.PerformLayout();
+            GameDataGroupBox.ResumeLayout(false);
+            GameDataGroupBox.PerformLayout();
+            AddLanguagesGroupBox.ResumeLayout(false);
+            AddLanguagesGroupBox.PerformLayout();
+            OutputMasterGroupBox.ResumeLayout(false);
+            OutputMasterGroupBox.PerformLayout();
+            TranslatingGroupBox.ResumeLayout(false);
+            TranslatingGroupBox.PerformLayout();
             groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
-            groupBox3.ResumeLayout(false);
-            groupBox3.PerformLayout();
-            groupBox4.ResumeLayout(false);
-            groupBox4.PerformLayout();
-            groupBox5.ResumeLayout(false);
-            groupBox5.PerformLayout();
-            groupBox8.ResumeLayout(false);
-            groupBox8.PerformLayout();
-            groupBox7.ResumeLayout(false);
-            groupBox7.PerformLayout();
+            groupBox1.ResumeLayout(false);
             groupBox6.ResumeLayout(false);
-            groupBox6.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private GroupBox groupBox1;
+        private GroupBox InputModGroupBox;
         private ToolTip toolTip1;
         private TextBox InputModFolderTextBox;
         private Button button1;
         private FolderBrowserDialog folderBrowserDialog1;
-        private GroupBox groupBox2;
+        private GroupBox GameDataGroupBox;
         private Button button2;
         private TextBox GameDataInputFolder;
         private FlowLayoutPanel LanguagesLayout;
-        private GroupBox groupBox3;
+        private GroupBox AddLanguagesGroupBox;
         private TextBox LanguageTextBox;
         private Button button3;
-        private GroupBox groupBox4;
+        private GroupBox OutputMasterGroupBox;
         private Button button4;
         private TextBox MasterFolderTextBox;
         private Button CreateFoldersButton;
         private Button ClearLanguagesButton;
-        private GroupBox groupBox5;
+        private GroupBox TranslatingGroupBox;
         private Button button7;
-        private Label OriginalTextLabel;
         private Label FilePathLabel;
         private Button button8;
-        private GroupBox groupBox7;
-        private TextBox textBox2;
         private GroupBox groupBox6;
-        private TextBox textBox1;
-        private GroupBox groupBox8;
-        private TextBox textBox3;
         private Label TextsCountLabel;
         private Button OpenExistingFolderButton;
+        private Button StartTranslatingButton;
+        private RichTextBox OriginalTextTextBox;
+        private RichTextBox richTextBox1;
+        private GroupBox groupBox2;
+        private RichTextBox richTextBox3;
+        private GroupBox groupBox1;
+        private RichTextBox richTextBox2;
+        private Button button5;
     }
 }

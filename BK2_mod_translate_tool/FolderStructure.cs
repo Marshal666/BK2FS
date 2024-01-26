@@ -34,7 +34,7 @@ namespace BK2_mod_translate_tool
 
         
 
-        public bool Create(string mod, string data, string master, ref string[] textFiles)
+        public bool Create(string mod, string data, string master, ref string[] textFiles, ref VirtualFileSystem fileSystem)
         {
             VirtualFileSystem FileSystem;
 
@@ -65,6 +65,8 @@ namespace BK2_mod_translate_tool
                 return false;
 
             FileSystem = new VirtualFileSystem(fs);
+            fileSystem = FileSystem;
+
             if (loader != null)
                 FileSystem.AddSystem(loader);
             if (loader2 != null)
@@ -73,8 +75,6 @@ namespace BK2_mod_translate_tool
             string[] files = FileSystem.GetAllFiles();
 
             textFiles = files.Where(path => Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase)).ToArray();
-
-
 
             return true;
         }

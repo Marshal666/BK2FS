@@ -149,7 +149,14 @@ namespace ZipFileSystem
 
         public string[] GetAllFiles()
         {
-            return ZipEntries.Keys.ToArray();
+            var files = new string[ZipEntries.Count];
+            int inx = 0;
+            foreach (var file in ZipEntries.Values) 
+            {
+                files[inx++] = file.ToString().FormattedPath();
+            }
+            return files;
+            //return ZipEntries.Keys.ToArray();
         }
     }
 

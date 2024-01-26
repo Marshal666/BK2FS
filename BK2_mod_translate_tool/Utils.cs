@@ -13,7 +13,7 @@ namespace BK2_mod_translate_tool
         static char[] InvalidPathChars = Path.GetInvalidPathChars();
         static char[] InvalidFileChars = Path.GetInvalidFileNameChars();
 
-        static string Reserved = "original";
+        public static string OriginalFolderName = "original";
 
         public static bool IsValidDirectoryName(string path)
         {
@@ -27,7 +27,7 @@ namespace BK2_mod_translate_tool
                 if (path.Contains(ch))
                     return false;
             }
-            if (path.ToLower() == Reserved)
+            if (path.ToLower() == OriginalFolderName)
                 return false;
             if (string.IsNullOrEmpty(path.Trim()))
                 return false;
