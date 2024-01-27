@@ -44,6 +44,7 @@
             button4 = new Button();
             MasterFolderTextBox = new TextBox();
             TranslatingGroupBox = new GroupBox();
+            EditCurrentIndexButton = new Button();
             TranslatingFlowUIPanel = new FlowLayoutPanel();
             OriginalTextTextBox = new RichTextBox();
             TextsCountLabel = new Label();
@@ -56,7 +57,6 @@
             StartTranslatingButton = new Button();
             LanguagesLayout = new FlowLayoutPanel();
             folderBrowserDialog1 = new FolderBrowserDialog();
-            EditCurrentIndexButton = new Button();
             InputModGroupBox.SuspendLayout();
             GameDataGroupBox.SuspendLayout();
             AddLanguagesGroupBox.SuspendLayout();
@@ -114,7 +114,7 @@
             GameDataGroupBox.Size = new Size(813, 63);
             GameDataGroupBox.TabIndex = 1;
             GameDataGroupBox.TabStop = false;
-            GameDataGroupBox.Text = "Games' data folder";
+            GameDataGroupBox.Text = "Game's data folder";
             toolTip1.SetToolTip(GameDataGroupBox, "Data folder of the game, used if mod folder doesn't have all .txt files covered");
             // 
             // GameDataInputFolder
@@ -203,6 +203,16 @@
             TranslatingGroupBox.TabStop = false;
             TranslatingGroupBox.Text = "Translating";
             toolTip1.SetToolTip(TranslatingGroupBox, "Translation is done here");
+            // 
+            // EditCurrentIndexButton
+            // 
+            EditCurrentIndexButton.Location = new Point(6, 28);
+            EditCurrentIndexButton.Name = "EditCurrentIndexButton";
+            EditCurrentIndexButton.Size = new Size(47, 22);
+            EditCurrentIndexButton.TabIndex = 12;
+            EditCurrentIndexButton.Text = "...";
+            EditCurrentIndexButton.UseVisualStyleBackColor = true;
+            EditCurrentIndexButton.Click += EditCurrentIndexButton_Click;
             // 
             // TranslatingFlowUIPanel
             // 
@@ -314,16 +324,6 @@
             LanguagesLayout.Name = "LanguagesLayout";
             LanguagesLayout.Size = new Size(667, 50);
             LanguagesLayout.TabIndex = 2;
-            // 
-            // EditCurrentIndexButton
-            // 
-            EditCurrentIndexButton.Location = new Point(6, 28);
-            EditCurrentIndexButton.Name = "EditCurrentIndexButton";
-            EditCurrentIndexButton.Size = new Size(47, 22);
-            EditCurrentIndexButton.TabIndex = 12;
-            EditCurrentIndexButton.Text = "...";
-            EditCurrentIndexButton.UseVisualStyleBackColor = true;
-            EditCurrentIndexButton.Click += EditCurrentIndexButton_Click;
             // 
             // Form1
             // 

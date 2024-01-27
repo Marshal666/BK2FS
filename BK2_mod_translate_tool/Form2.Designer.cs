@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             OKButton = new Button();
-            CancelButton = new Button();
             textBox1 = new TextBox();
             FilesIndexesList = new ListView();
             label1 = new Label();
@@ -38,21 +37,13 @@
             // 
             // OKButton
             // 
-            OKButton.Location = new Point(410, 402);
+            OKButton.Location = new Point(335, 402);
             OKButton.Name = "OKButton";
             OKButton.Size = new Size(134, 36);
             OKButton.TabIndex = 0;
             OKButton.Text = "OK";
             OKButton.UseVisualStyleBackColor = true;
-            // 
-            // CancelButton
-            // 
-            CancelButton.Location = new Point(270, 402);
-            CancelButton.Name = "CancelButton";
-            CancelButton.Size = new Size(134, 36);
-            CancelButton.TabIndex = 1;
-            CancelButton.Text = "Cancel";
-            CancelButton.UseVisualStyleBackColor = true;
+            OKButton.Click += OKButton_Click;
             // 
             // textBox1
             // 
@@ -64,12 +55,16 @@
             // 
             // FilesIndexesList
             // 
+            FilesIndexesList.FullRowSelect = true;
+            FilesIndexesList.GridLines = true;
             FilesIndexesList.Location = new Point(12, 52);
             FilesIndexesList.Name = "FilesIndexesList";
             FilesIndexesList.Size = new Size(776, 344);
             FilesIndexesList.TabIndex = 6;
             FilesIndexesList.UseCompatibleStateImageBehavior = false;
             FilesIndexesList.View = View.Details;
+            FilesIndexesList.ItemActivate += FilesIndexesList_ItemActivate;
+            FilesIndexesList.MouseDoubleClick += FilesIndexesList_MouseDoubleClick;
             // 
             // label1
             // 
@@ -88,6 +83,7 @@
             ClearResultsButton.TabIndex = 8;
             ClearResultsButton.Text = "Clear Results";
             ClearResultsButton.UseVisualStyleBackColor = true;
+            ClearResultsButton.Click += ClearResultsButton_Click;
             // 
             // Form2
             // 
@@ -98,7 +94,6 @@
             Controls.Add(label1);
             Controls.Add(FilesIndexesList);
             Controls.Add(textBox1);
-            Controls.Add(CancelButton);
             Controls.Add(OKButton);
             Name = "Form2";
             Text = "Pick file index";
@@ -109,7 +104,6 @@
         #endregion
 
         private Button OKButton;
-        private Button CancelButton;
         private TextBox textBox1;
         private ListView FilesIndexesList;
         private Label label1;
