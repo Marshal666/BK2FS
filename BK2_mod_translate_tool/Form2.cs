@@ -29,6 +29,9 @@ namespace BK2_mod_translate_tool
                 item.SubItems.Add(fileIndexes[i].file);
                 FilesIndexesList.Items.Add(item);
             }
+            this.Refresh();
+            //FilesIndexesList.Refresh();
+            //FilesIndexesList.RedrawItems(0, fileIndexes.Length - 1, false);
         }
 
         public IEnumerable<(int, string)> IndexStringArray(string[] arr)
@@ -68,12 +71,17 @@ namespace BK2_mod_translate_tool
                 return new (int, string)[0];
             int retCount = Math.Min(list.Length, count);
             (int, string)[] ret = new (int, string)[retCount];
-            (int inx, double similarity)[] Similarities = new (int inx, double similarity)[list.Length];
+            (int inx, double similarity, int levendist)[] Similarities = new (int, double, int)[list.Length];
             for (int i = 0; i < list.Length; i++)
             {
-                Similarities[i] = (i, search.FuzzyMatch(list[i]));
+                Similarities[i] = (i, search.FuzzyMatch(list[i]), search.LevenshteinDistance(list[i]));
             }
-            Array.Sort(Similarities, (x, y) => -x.similarity.CompareTo(y.similarity));
+            //Array.Sort(Similarities, (x, y) => -x.similarity.CompareTo(y.similarity));
+            Similarities = Similarities
+                .OrderByDescending((v) => v.levendist)
+                .OrderByDescending((v) => v.similarity)
+                .Take(retCount).ToArray();
+
             for (int i = 0; i < retCount; i++)
             {
                 ret[i] = (Similarities[i].inx, list[Similarities[i].inx]);

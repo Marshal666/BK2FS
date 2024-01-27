@@ -57,6 +57,7 @@
             StartTranslatingButton = new Button();
             LanguagesLayout = new FlowLayoutPanel();
             folderBrowserDialog1 = new FolderBrowserDialog();
+            button5 = new Button();
             InputModGroupBox.SuspendLayout();
             GameDataGroupBox.SuspendLayout();
             AddLanguagesGroupBox.SuspendLayout();
@@ -187,6 +188,7 @@
             // 
             // TranslatingGroupBox
             // 
+            TranslatingGroupBox.Controls.Add(button5);
             TranslatingGroupBox.Controls.Add(EditCurrentIndexButton);
             TranslatingGroupBox.Controls.Add(TranslatingFlowUIPanel);
             TranslatingGroupBox.Controls.Add(OriginalTextTextBox);
@@ -236,11 +238,11 @@
             // TextsCountLabel
             // 
             TextsCountLabel.AutoSize = true;
-            TextsCountLabel.Location = new Point(719, 32);
+            TextsCountLabel.Location = new Point(694, 35);
             TextsCountLabel.Name = "TextsCountLabel";
-            TextsCountLabel.Size = new Size(112, 15);
+            TextsCountLabel.Size = new Size(137, 15);
             TextsCountLabel.TabIndex = 7;
-            TextsCountLabel.Text = "TEXTS COUNT: ??/??";
+            TextsCountLabel.Text = "TEXTS COUNT: ????/?????";
             // 
             // button8
             // 
@@ -325,6 +327,17 @@
             LanguagesLayout.Size = new Size(667, 50);
             LanguagesLayout.TabIndex = 2;
             // 
+            // button5
+            // 
+            button5.Location = new Point(741, 402);
+            button5.Name = "button5";
+            button5.Size = new Size(90, 30);
+            button5.TabIndex = 13;
+            button5.Text = "Save Edits";
+            toolTip1.SetToolTip(button5, "Saves current edits (Ctrl + S)");
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click_1;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -392,5 +405,6 @@
         private RichTextBox OriginalTextTextBox;
         private FlowLayoutPanel TranslatingFlowUIPanel;
         private Button EditCurrentIndexButton;
+        private Button button5;
     }
 }

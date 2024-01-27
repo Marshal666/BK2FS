@@ -95,6 +95,7 @@
             Controls.Add(FilesIndexesList);
             Controls.Add(textBox1);
             Controls.Add(OKButton);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "Form2";
             Text = "Pick file index";
             ResumeLayout(false);

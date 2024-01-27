@@ -1,5 +1,6 @@
 using System.Text;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace BK2_mod_translate_tool
 {
@@ -62,20 +63,35 @@ namespace BK2_mod_translate_tool
         }
 
         public Dictionary<string, RichTextBox> LanguageInputs = new Dictionary<string, RichTextBox>();
+        public List<(string, RichTextBox)> LanguageInputsOrder = new List<(string, RichTextBox)>();
+        //public OrderedDictionary LanguageInputs = new OrderedDictionary();
+
+        public void AddLanguageInput(string language, RichTextBox rbt)
+        {
+            LanguageInputs.Add(language, rbt);
+            LanguageInputsOrder.Add((language, rbt));
+        }
+
+        public void RemoveLanguageInput(string language)
+        {
+            LanguageInputs.Remove(language);
+            LanguageInputsOrder.RemoveAt(LanguageInputsOrder.FindIndex((v) => v.Item1 == language));
+        }
 
         public void AddLanguageTranslationUI(string language)
         {
 
             RichTextBox rbt = new RichTextBox();
-            rbt.Size = new Size(188, 79);
+            rbt.Size = new Size(188+10, 79);
             rbt.TabIndex = 0;
             rbt.Text = "";
             rbt.Location = new Point(6, 22);
-
-            LanguageInputs.Add(language, rbt);
+            rbt.Multiline = true;
+            
+            AddLanguageInput(language, rbt);
 
             GroupBox gb = new GroupBox();
-            gb.Size = new Size(200, 107);
+            gb.Size = new Size(200+10, 107);
             gb.TabIndex = 4;
             gb.TabStop = false;
             gb.Text = language;
@@ -99,8 +115,21 @@ namespace BK2_mod_translate_tool
             if (gb != null)
             {
                 TranslatingFlowUIPanel.Controls.Remove(gb);
-                LanguageInputs.Remove(language);
+                RemoveLanguageInput(language);
             }
+        }
+
+        public void IncrementEditingIndex()
+        {
+            App.Instance.IncrementEditingIndex();
+            LanguageInputsOrder.First().Item2.Focus();
+            
+        }
+
+        public void DecrementEditingIndex() 
+        {
+            App.Instance.DecrementEditingIndex();
+            LanguageInputsOrder.First().Item2.Focus();
         }
 
         #endregion
@@ -198,12 +227,12 @@ namespace BK2_mod_translate_tool
 
         private void button7_Click(object sender, EventArgs e)
         {
-            App.Instance.IncrementEditingIndex();
+            IncrementEditingIndex();
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            App.Instance.DecrementEditingIndex();
+            DecrementEditingIndex();
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -211,11 +240,15 @@ namespace BK2_mod_translate_tool
             //MessageBox.Show("key down");
             if (e.KeyCode == Keys.B && e.Control)
             {
-                App.Instance.DecrementEditingIndex();
+                DecrementEditingIndex();
             }
             if (e.KeyCode == Keys.N && e.Control)
             {
-                App.Instance.IncrementEditingIndex();
+                IncrementEditingIndex();
+            }
+            if(e.KeyCode == Keys.S && e.Control)
+            {
+                App.Instance.SaveEdits();
             }
         }
 
@@ -231,6 +264,11 @@ namespace BK2_mod_translate_tool
             //f2.TopMost = true;
             f2.Init();
             f2.ShowDialog();
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            App.Instance.SaveEdits();
         }
     }
 }
