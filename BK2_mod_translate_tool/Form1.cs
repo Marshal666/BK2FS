@@ -209,11 +209,11 @@ namespace BK2_mod_translate_tool
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             //MessageBox.Show("key down");
-            if (e.KeyCode == Keys.Y && e.Control)
+            if (e.KeyCode == Keys.B && e.Control)
             {
                 App.Instance.DecrementEditingIndex();
             }
-            if (e.KeyCode == Keys.X && e.Control)
+            if (e.KeyCode == Keys.N && e.Control)
             {
                 App.Instance.IncrementEditingIndex();
             }

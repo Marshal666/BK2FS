@@ -249,7 +249,7 @@
             button8.Size = new Size(90, 30);
             button8.TabIndex = 3;
             button8.Text = "← Previous";
-            toolTip1.SetToolTip(button8, "Previous file to translate (Ctrl + Y)");
+            toolTip1.SetToolTip(button8, "Previous file to translate (Ctrl + B)");
             button8.UseVisualStyleBackColor = true;
             button8.Click += button8_Click;
             // 
@@ -269,7 +269,7 @@
             button7.Size = new Size(90, 30);
             button7.TabIndex = 0;
             button7.Text = "Next →";
-            toolTip1.SetToolTip(button7, "Next file to translate (Ctrl + X)");
+            toolTip1.SetToolTip(button7, "Next file to translate (Ctrl + N)");
             button7.UseVisualStyleBackColor = true;
             button7.Click += button7_Click;
             // 
