@@ -9,6 +9,8 @@ class Program
 
     static void Main(string[] args)
     {
+        if (args.Length < 0)
+            return;
         ConsoleLogger cl = new ConsoleLogger();
         FileLogger fl = new FileLogger("output.txt");
         FolderSystem fs = new FolderSystem(args[0]);
@@ -41,7 +43,7 @@ class Program
         ix = 0;
         foreach(var side in data.Sides.Items)
         {
-            fl.WriteLine("    " + $"{ix++}: " + side.NameFileRef.GetFileContents(FileSystem));
+            fl.WriteLine("    " + $"{ix++}: " + side.NameFileRef.GetFileContents(FileSystem, "Consts/Test"));
         }
 
         fl.WriteLine("Units per Side/Tech level:");
