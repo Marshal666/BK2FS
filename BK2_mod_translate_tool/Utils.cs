@@ -65,5 +65,15 @@ namespace BK2_mod_translate_tool
             return Path.Exists(path);
         }
 
+        public static string RelativePath(string root, string path)
+        {
+            return Path.GetRelativePath(root, path);
+        }
+
+        public static string FormattedPath(string path)
+        {
+            return path.ToLower();
+        }
+
     }
 }

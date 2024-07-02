@@ -44,6 +44,7 @@
             button4 = new Button();
             MasterFolderTextBox = new TextBox();
             TranslatingGroupBox = new GroupBox();
+            button5 = new Button();
             EditCurrentIndexButton = new Button();
             TranslatingFlowUIPanel = new FlowLayoutPanel();
             OriginalTextTextBox = new RichTextBox();
@@ -57,7 +58,7 @@
             StartTranslatingButton = new Button();
             LanguagesLayout = new FlowLayoutPanel();
             folderBrowserDialog1 = new FolderBrowserDialog();
-            button5 = new Button();
+            button6 = new Button();
             InputModGroupBox.SuspendLayout();
             GameDataGroupBox.SuspendLayout();
             AddLanguagesGroupBox.SuspendLayout();
@@ -188,6 +189,7 @@
             // 
             // TranslatingGroupBox
             // 
+            TranslatingGroupBox.Controls.Add(button6);
             TranslatingGroupBox.Controls.Add(button5);
             TranslatingGroupBox.Controls.Add(EditCurrentIndexButton);
             TranslatingGroupBox.Controls.Add(TranslatingFlowUIPanel);
@@ -205,6 +207,17 @@
             TranslatingGroupBox.TabStop = false;
             TranslatingGroupBox.Text = "Translating";
             toolTip1.SetToolTip(TranslatingGroupBox, "Translation is done here");
+            // 
+            // button5
+            // 
+            button5.Location = new Point(741, 402);
+            button5.Name = "button5";
+            button5.Size = new Size(90, 30);
+            button5.TabIndex = 13;
+            button5.Text = "Save Edits";
+            toolTip1.SetToolTip(button5, "Saves current edits (Ctrl + S)");
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click_1;
             // 
             // EditCurrentIndexButton
             // 
@@ -327,16 +340,15 @@
             LanguagesLayout.Size = new Size(667, 50);
             LanguagesLayout.TabIndex = 2;
             // 
-            // button5
+            // button6
             // 
-            button5.Location = new Point(741, 402);
-            button5.Name = "button5";
-            button5.Size = new Size(90, 30);
-            button5.TabIndex = 13;
-            button5.Text = "Save Edits";
-            toolTip1.SetToolTip(button5, "Saves current edits (Ctrl + S)");
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click_1;
+            button6.Location = new Point(6, 403);
+            button6.Name = "button6";
+            button6.Size = new Size(113, 29);
+            button6.TabIndex = 10;
+            button6.Text = "Diff Mode";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click_1;
             // 
             // Form1
             // 
@@ -406,5 +418,6 @@
         private FlowLayoutPanel TranslatingFlowUIPanel;
         private Button EditCurrentIndexButton;
         private Button button5;
+        private Button button6;
     }
 }

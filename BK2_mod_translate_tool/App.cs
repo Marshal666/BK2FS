@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZipFileSystem;
 using System.Text.Json;
+using System.Linq;
 
 namespace BK2_mod_translate_tool
 {
@@ -47,6 +48,7 @@ namespace BK2_mod_translate_tool
         }
 
         public EditingData editingData;
+        public EditingData editingDataDelta;
 
         public class WorkingData
         {
@@ -57,6 +59,7 @@ namespace BK2_mod_translate_tool
         }
 
         public WorkingData workingData;
+        public WorkingData workingDataDelta;
 
         static App instance;
 
@@ -78,6 +81,7 @@ namespace BK2_mod_translate_tool
         private App() { }
 
         Form1 form;
+        Form3 deltaForm;
 
         public Form1 Form
         {
@@ -85,7 +89,14 @@ namespace BK2_mod_translate_tool
             set => form = value;
         }
 
+        public Form3 DeltaForm
+        {
+            get => deltaForm;
+            set => deltaForm = value;
+        }
+
         HashSet<string> languages = new HashSet<string>();
+        HashSet<string> languagesDelta = new HashSet<string>();
 
         public IReadOnlySet<string> Languages => languages;
 
@@ -103,6 +114,14 @@ namespace BK2_mod_translate_tool
                 nb.Click += (s, e) => { RemoveLanguage(language); layout.Controls.Remove(nb); form.RemoveLanguageTranslationUI(language); };
                 layout.Controls.Add(nb);
                 form.AddLanguageTranslationUI(language);
+            }
+        }
+
+        public void AddLanguageDelta(string language, FlowLayoutPanel layout, ToolTip tooltip = null)
+        {
+            if (languagesDelta.Add(language))
+            {
+                deltaForm.AddLanguageTranslationUI(language);
             }
         }
 
@@ -133,6 +152,19 @@ namespace BK2_mod_translate_tool
             }
 
             form.SwitchToTranslation(editingData.CurrentFile);
+        }
+
+        public void LoadDeltaData(string file)
+        {
+            editingDataDelta = EditingData.LoadFromJSON(file);
+            editingDataDelta.CurrentFile = 0;
+
+            foreach(var language in editingDataDelta.Languages)
+            {
+                AddLanguageDelta(language, deltaForm.TranslatingFlowLayout);
+            }
+
+            deltaForm.SwitchToTranslation(editingDataDelta.CurrentFile);
         }
 
         public void CreateFolderStructure(string modFolder, string dataFolder, string masterFolder)
@@ -212,6 +244,33 @@ namespace BK2_mod_translate_tool
             workingData.Files = files;
         }
 
+        public void LoadDeltaFolderFiles()
+        {
+            if (editingDataDelta == null)
+                return;
+            string path = Path.Combine(editingDataDelta.MasterFolder, Utils.OriginalFolderName);
+
+            var CurrentFiles = new HashSet<string>();
+            foreach (var file in workingData.Files)
+            {
+                CurrentFiles.Add(Utils.RelativePath(editingData.MasterFolder, file).FormattedPath());
+            }
+
+            var OldFiles = new HashSet<string>();
+            foreach (var file in Directory.EnumerateFiles(path, "*.txt", SearchOption.AllDirectories))
+            {
+                OldFiles.Add(Utils.RelativePath(editingDataDelta.MasterFolder, file).FormattedPath());
+            }
+
+            var DeltaFiles = CurrentFiles.Except(OldFiles).ToArray();
+            for (int i = 0; i < DeltaFiles.Length; i++)
+                DeltaFiles[i] = Path.Combine(editingData.MasterFolder, DeltaFiles[i]);
+
+            workingDataDelta = new WorkingData();
+            workingDataDelta.CurrentFile = 0;
+            workingDataDelta.Files = DeltaFiles;
+        }
+
         public void SaveEditingState()
         {
             if(editingData == null) return;
@@ -234,6 +293,20 @@ namespace BK2_mod_translate_tool
             LoadFileStates();
         }
 
+        public void SwitchEditFileAtIndexDelta(int index, bool save = true)
+        {
+            if (workingDataDelta == null)
+                return;
+            if (save)
+                SaveEditsDelta();
+            index = Math.Clamp(index, 0, workingDataDelta.Files.Length - 1);
+            workingDataDelta.CurrentFile = index;
+            deltaForm.TranslatingFilePathLabel.Text = workingDataDelta.Files[index];
+            deltaForm.TranslatingFileTextBox.Text = File.ReadAllText(workingDataDelta.Files[index]);
+            deltaForm.UpdateCountLabel();
+            LoadFileStatesDelta();
+        }
+
         public void IncrementEditingIndex()
         {
             if (workingData == null)
@@ -246,6 +319,20 @@ namespace BK2_mod_translate_tool
             if (workingData == null)
                 return;
             SwitchEditFileAtIndex(workingData.CurrentFile - 1);
+        }
+
+        public void IncrementEditingIndexDelta()
+        {
+            if (workingDataDelta == null)
+                return;
+            SwitchEditFileAtIndexDelta(workingDataDelta.CurrentFile + 1);
+        }
+
+        public void DecrementEditingIndexDelta()
+        {
+            if (workingDataDelta == null)
+                return;
+            SwitchEditFileAtIndexDelta(workingDataDelta.CurrentFile - 1);
         }
 
         public void SaveEdits()
@@ -266,6 +353,24 @@ namespace BK2_mod_translate_tool
             }
         }
 
+        public void SaveEditsDelta()
+        {
+            var inputs = deltaForm.LanguageInputs;
+            if (inputs.Count != editingDataDelta.Languages.Length)
+            {
+                MessageBox.Show("Shit happened.. bruh", "Fatal error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+            string fp = Path.GetRelativePath(Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName), workingDataDelta.CurrentFilePath);
+            foreach (var lang in inputs.Keys)
+            {
+                string path = Path.Combine(editingData.MasterFolder, lang, fp);
+                string data = File.ReadAllText(path);
+                if (inputs[lang].Text != data)
+                    File.WriteAllText(path, inputs[lang].Text, Encoding.Unicode);
+            }
+        }
+
         public void LoadFileStates()
         {
             var inputs = form.LanguageInputs;
@@ -275,6 +380,23 @@ namespace BK2_mod_translate_tool
                 Application.Exit();
             }
             string fp = Path.GetRelativePath(Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName), workingData.CurrentFilePath);
+            foreach (var lang in inputs.Keys)
+            {
+                string path = Path.Combine(editingData.MasterFolder, lang, fp);
+                string data = File.ReadAllText(path);
+                inputs[lang].Text = data;
+            }
+        }
+
+        public void LoadFileStatesDelta()
+        {
+            var inputs = deltaForm.LanguageInputs;
+            if (inputs.Count != editingDataDelta.Languages.Length)
+            {
+                MessageBox.Show("Something went wrong.. bruh", "Fatal error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
+            string fp = Path.GetRelativePath(Path.Combine(editingData.MasterFolder, Utils.OriginalFolderName), workingDataDelta.CurrentFilePath);
             foreach (var lang in inputs.Keys)
             {
                 string path = Path.Combine(editingData.MasterFolder, lang, fp);

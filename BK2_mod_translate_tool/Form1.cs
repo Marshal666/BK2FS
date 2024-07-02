@@ -9,7 +9,7 @@ namespace BK2_mod_translate_tool
 
         #region HELPERS
 
-        void SetControlGroupEnabled(Control[] controls, bool val)
+        static void SetControlGroupEnabled(Control[] controls, bool val)
         {
             if (controls == null || controls.Length == 0)
                 return;
@@ -82,16 +82,16 @@ namespace BK2_mod_translate_tool
         {
 
             RichTextBox rbt = new RichTextBox();
-            rbt.Size = new Size(188+10, 79);
+            rbt.Size = new Size(188 + 10, 79);
             rbt.TabIndex = 0;
             rbt.Text = "";
             rbt.Location = new Point(6, 22);
             rbt.Multiline = true;
-            
+
             AddLanguageInput(language, rbt);
 
             GroupBox gb = new GroupBox();
-            gb.Size = new Size(200+10, 107);
+            gb.Size = new Size(200 + 10, 107);
             gb.TabIndex = 4;
             gb.TabStop = false;
             gb.Text = language;
@@ -123,10 +123,10 @@ namespace BK2_mod_translate_tool
         {
             App.Instance.IncrementEditingIndex();
             LanguageInputsOrder.First().Item2.Focus();
-            
+
         }
 
-        public void DecrementEditingIndex() 
+        public void DecrementEditingIndex()
         {
             App.Instance.DecrementEditingIndex();
             LanguageInputsOrder.First().Item2.Focus();
@@ -246,7 +246,7 @@ namespace BK2_mod_translate_tool
             {
                 IncrementEditingIndex();
             }
-            if(e.KeyCode == Keys.S && e.Control)
+            if (e.KeyCode == Keys.S && e.Control)
             {
                 App.Instance.SaveEdits();
             }
@@ -269,6 +269,13 @@ namespace BK2_mod_translate_tool
         private void button5_Click_1(object sender, EventArgs e)
         {
             App.Instance.SaveEdits();
+        }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            Form3 form3 = new Form3();
+            form3.Init();
+            form3.ShowDialog();
         }
     }
 }
