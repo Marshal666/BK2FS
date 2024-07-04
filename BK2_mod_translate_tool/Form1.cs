@@ -259,7 +259,7 @@ namespace BK2_mod_translate_tool
 
         private void EditCurrentIndexButton_Click(object sender, EventArgs e)
         {
-            var f2 = new Form2();
+            var f2 = new Form2(App.Instance.workingData, App.Instance.editingData, false);
             //this.TopMost = false;
             //f2.TopMost = true;
             f2.Init();

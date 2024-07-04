@@ -80,6 +80,7 @@
             EditCurrentIndexButton.TabIndex = 12;
             EditCurrentIndexButton.Text = "...";
             EditCurrentIndexButton.UseVisualStyleBackColor = true;
+            EditCurrentIndexButton.Click += EditCurrentIndexButton_Click;
             // 
             // TranslatingFlowUIPanel
             // 

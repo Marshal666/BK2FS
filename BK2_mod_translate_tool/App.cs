@@ -20,7 +20,6 @@ namespace BK2_mod_translate_tool
             public int CurrentFile { get; set; } = 1;
             public string ModFolder { get; set; }
             public string DataFolder { get; set; }
-
             public string MasterFolder { get; set; }
 
             public EditingData() { }
@@ -34,7 +33,24 @@ namespace BK2_mod_translate_tool
             public static EditingData LoadFromJSON(string path)
             {
                 string data = File.ReadAllText(path);
-                return JsonSerializer.Deserialize<EditingData>(data);
+                var ret = JsonSerializer.Deserialize<EditingData>(data);
+
+                string currentPath = Path.GetDirectoryName(path);
+                if (!Path.Exists(ret.MasterFolder) || ret.MasterFolder.FormattedPath().TrimEnd('\\') != currentPath.FormattedPath().TrimEnd('\\'))
+                {
+                    
+                    bool currentPathValid = true;
+
+                    foreach(var lang in ret.Languages)
+                    {
+                        if (!Path.Exists(Path.Combine(currentPath, lang))) return ret;
+                    }
+
+                    if (currentPathValid)
+                        ret.MasterFolder = currentPath;
+                }
+
+                return ret;
             }
 
             public EditingData(string[] languages, int currentFile, string modFolder, string dataFolder, string masterFolder)
@@ -99,6 +115,8 @@ namespace BK2_mod_translate_tool
         HashSet<string> languagesDelta = new HashSet<string>();
 
         public IReadOnlySet<string> Languages => languages;
+
+        public IReadOnlySet<string> LanguagesDelta => languagesDelta;
 
         public void AddLanguage(string language, FlowLayoutPanel layout, ToolTip tooltip = null)
         {
@@ -403,6 +421,15 @@ namespace BK2_mod_translate_tool
                 string data = File.ReadAllText(path);
                 inputs[lang].Text = data;
             }
+        }
+
+        public void ClearDeltaData(bool cleanForm)
+        {
+            editingDataDelta = null;
+            workingDataDelta = null;
+            languagesDelta.Clear();
+            if (cleanForm)
+                deltaForm = null;
         }
 
     }

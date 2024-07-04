@@ -13,9 +13,28 @@ namespace BK2_mod_translate_tool
 {
     public partial class Form2 : Form
     {
-        public Form2()
+
+        App.WorkingData WorkingData;
+        App.EditingData EditingData;
+        bool DeltaMode;
+
+        delegate void EFI(int index, bool save = true);
+        EFI SwitchEditFileIndex
+        {
+            get
+            {
+                if (DeltaMode)
+                    return App.Instance.SwitchEditFileAtIndexDelta;
+                return App.Instance.SwitchEditFileAtIndex;
+            }
+        }
+
+        public Form2(App.WorkingData workingData, App.EditingData editingData, bool deltaMode)
         {
             InitializeComponent();
+            WorkingData = workingData;
+            EditingData = editingData;
+            DeltaMode = deltaMode;
         }
 
         #region HELPERS
@@ -48,20 +67,20 @@ namespace BK2_mod_translate_tool
 
         public void Init()
         {
-            if (App.Instance.workingData == null)
+            if (WorkingData == null)
                 return;
 
             var c1 = FilesIndexesList.Columns.Add("Index", 60);
             var c2 = FilesIndexesList.Columns.Add("Path", 700);
 
-            files = IndexStringArray(App.Instance.workingData.Files).ToArray();
+            files = IndexStringArray(WorkingData.Files).ToArray();
             SetFileIndexes(files);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             //searching
-            var results = SearchFor(textBox1.Text, App.Instance.workingData.Files, 16);
+            var results = SearchFor(textBox1.Text, WorkingData.Files, 16);
             SetFileIndexes(results);
         }
 
@@ -104,7 +123,7 @@ namespace BK2_mod_translate_tool
 
             if (int.TryParse(item.Text, out int val))
             {
-                App.Instance.SwitchEditFileAtIndex(val);
+                SwitchEditFileIndex(val);
             }
         }
 
@@ -118,7 +137,7 @@ namespace BK2_mod_translate_tool
 
             if (int.TryParse(item.Text, out int val))
             {
-                App.Instance.SwitchEditFileAtIndex(val);
+                SwitchEditFileIndex(val);
             }
         }
 

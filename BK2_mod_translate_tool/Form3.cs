@@ -80,6 +80,14 @@ namespace BK2_mod_translate_tool
 
         }
 
+        public void ClearWorkingData(bool formEnd = false)
+        {
+            App.Instance.ClearDeltaData(formEnd);
+            TranslatingFlowLayout.Controls.Clear();
+            LanguageInputs.Clear();
+            LanguageInputsOrder.Clear();
+        }
+
         public void RemoveLanguageTranslationUI(string language)
         {
             GroupBox gb = null;
@@ -100,14 +108,14 @@ namespace BK2_mod_translate_tool
 
         public void IncrementEditingIndex()
         {
-            App.Instance.IncrementEditingIndex();
+            App.Instance.IncrementEditingIndexDelta();
             LanguageInputsOrder.First().Item2.Focus();
 
         }
 
         public void DecrementEditingIndex()
         {
-            App.Instance.DecrementEditingIndex();
+            App.Instance.DecrementEditingIndexDelta();
             LanguageInputsOrder.First().Item2.Focus();
         }
 
@@ -132,8 +140,7 @@ namespace BK2_mod_translate_tool
 
         private void OnClose(object? sender, FormClosedEventArgs e)
         {
-            App.Instance.editingDataDelta = null;
-            App.Instance.workingDataDelta = null;
+            ClearWorkingData(true);
         }
 
         public void Init()
@@ -148,14 +155,24 @@ namespace BK2_mod_translate_tool
         private void button1_Click(object sender, EventArgs e)
         {
             var res = folderBrowserDialog1.ShowDialog();
-            if (res == DialogResult.OK)
+
+            if (res != DialogResult.OK)
+                return;
+
+            string path = Path.Combine(folderBrowserDialog1.SelectedPath, App.ConfigFile);
+
+            if (!File.Exists(path))
+                return;
+            
+            App.Instance.LoadDeltaData(path);
+            if (App.Instance.editingDataDelta != null)
             {
-                string path = Path.Combine(folderBrowserDialog1.SelectedPath, App.ConfigFile);
-                if (File.Exists(path))
-                {
-                    App.Instance.LoadDeltaData(path);
-                }
+                DiffProjectFolderName.Text = App.Instance.editingDataDelta.MasterFolder;
+            } else
+            {
+                ClearWorkingData();
             }
+            
         }
 
         public void SwitchToTranslation(int currentFile)
@@ -164,6 +181,7 @@ namespace BK2_mod_translate_tool
             if (App.Instance.workingDataDelta.Files.Length < 1)
             {
                 MessageBox.Show("No delta files to edit!", "Warning");
+                ClearWorkingData();
                 return;
             }
             SetControlGroupEnabled(EditingControls, true);
@@ -183,7 +201,7 @@ namespace BK2_mod_translate_tool
             }
             if (e.KeyCode == Keys.S && e.Control)
             {
-                App.Instance.SaveEdits();
+                App.Instance.SaveEditsDelta();
             }
         }
 
@@ -200,6 +218,15 @@ namespace BK2_mod_translate_tool
         private void button8_Click(object sender, EventArgs e)
         {
             App.Instance.DecrementEditingIndexDelta();
+        }
+
+        private void EditCurrentIndexButton_Click(object sender, EventArgs e)
+        {
+            var f2 = new Form2(App.Instance.workingDataDelta, App.Instance.editingData, true);
+            //this.TopMost = false;
+            //f2.TopMost = true;
+            f2.Init();
+            f2.ShowDialog();
         }
     }
 }
