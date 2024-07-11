@@ -46,6 +46,16 @@ namespace ZipFileSystem
 			return null;
 		}
 
+		public float GetSquadExpPrice(IVirtualFileSystem fs, string rootDir = null, ILogger logs = null)
+		{
+			float ret = 0f;
+			foreach(var unit in GetInfantry(fs, rootDir, logs)) 
+			{
+				ret += unit.stats.ExpPrice;
+			}
+			return ret;
+		}
+
 		public (string path, InfantryRPGStats stats)[] GetInfantry(IVirtualFileSystem fs, string rootDir = null, ILogger logs = null)
 		{
 			List<(string path, InfantryRPGStats stats)> ret = new List<(string path, InfantryRPGStats stats)>();

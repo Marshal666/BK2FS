@@ -12,7 +12,7 @@ class Program
         if (args.Length < 0)
             return;
         ConsoleLogger cl = new ConsoleLogger();
-        FileLogger fl = new FileLogger("output.txt");
+        FileLogger fl = new FileLogger("output.yml");
         FolderSystem fs = new FolderSystem(args[0]);
         VirtualFileSystem FileSystem = new VirtualFileSystem(fs);
         PakLoader pk;
@@ -36,32 +36,34 @@ class Program
         nint ix = 0;
         foreach (var year in data.TechLevels.Items)
         {
-            fl.WriteLine($"    {ix++} Name: " + year.NameFileRef.GetFileContents(FileSystem, "Consts/Test"));
+            fl.WriteLine($"    {ix++} Name: " + year.NameFileRef.GetFileContents(FileSystem, "Consts/Test").Trim());
         }
 
         fl.WriteLine("Sides:");
         ix = 0;
         foreach(var side in data.Sides.Items)
         {
-            fl.WriteLine("    " + $"{ix++}: " + side.NameFileRef.GetFileContents(FileSystem, "Consts/Test"));
+            fl.WriteLine("    " + $"{ix++}: " + side.NameFileRef.GetFileContents(FileSystem, "Consts/Test").Trim());
         }
 
         fl.WriteLine("Units per Side/Tech level:");
         foreach(var side in data.Sides.Items)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(side.NameFileRef.GetFileContents(FileSystem));
+            sb.Append(side.NameFileRef.GetFileContents(FileSystem).Trim());
             sb.Append(":\n");
             int inx = 0;
             foreach (var year in data.TechLevels.Items)
             {
                 sb.Append("    ");
-                sb.Append(year.NameFileRef.GetFileContents(FileSystem));
+                sb.Append(year.NameFileRef.GetFileContents(FileSystem).Trim());
                 sb.Append(":\n");
                 var level = side.TechLevels.Items[inx];
                 sb.Append($"        Starting Units:\n");
                 var startingUnits = (Reinforcement)reinfSer.Deserialize(new MemoryStream(level.StartingUnits.GetFileContentsBin(FileSystem)));
                 Dictionary<string, int> units = new Dictionary<string, int>();
+                Dictionary<string, float> unitExps = new Dictionary<string, float>();
+                float expSum = 0f;
                 foreach (var unit in startingUnits.Entries.Items)
                 {
                     if(!string.IsNullOrEmpty(unit.MechUnit.FormattedRef))
@@ -73,6 +75,11 @@ class Program
                         if (stats == null)
                             continue;
                         string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
+                        if (name == null)
+                            name = $"NAME_ERROR: {unit.MechUnit.FormattedRef}";
+                        name = name.Trim();
+                        expSum += stats.ExpPrice;
+                        unitExps[name] = stats.ExpPrice;
                         if (!string.IsNullOrWhiteSpace(name))
                         {
                             if (units.Keys.Contains(name))
@@ -85,8 +92,22 @@ class Program
                         }
                     } else if(!string.IsNullOrEmpty(unit.Squad.FormattedRef))
                     {
-                        SquadRPGStats stats = (SquadRPGStats)squadSer.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
+                        SquadRPGStats stats;
+                        try
+                        {
+                            stats = (SquadRPGStats)squadSer.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
+                        } catch(Exception ex)
+                        {
+                            cl.WriteLine($"Error reading squad stats: {ex.Message}");
+                            continue;
+                        }
                         string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
+                        if (name == null)
+                            name = $"NAME_ERROR: {unit.Squad.FormattedRef}";
+                        name = name.Trim();
+                        float squadExpPrice = stats.GetSquadExpPrice(FileSystem, unit.Squad.FormattedRef.GetPath(), cl);
+                        expSum += squadExpPrice;
+                        unitExps[name] = squadExpPrice;
                         if (!string.IsNullOrWhiteSpace(name))
                         {
                             if (units.Keys.Contains(name))
@@ -106,8 +127,10 @@ class Program
                     sb.Append(unit.Value);
                     sb.Append("x: ");
                     sb.Append(unit.Key.Replace("\"","\\\""));
+                    sb.Append($" (ExpPrice: {unitExps[unit.Key]})");
                     sb.Append('\n');
                 }
+                sb.Append($"            ExpPriceSum: {expSum}\n");
                 sb.Append("        Reinforcements:\n");
                 foreach(var reinfs in level.Reinforcements.Items)
                 {
@@ -131,6 +154,8 @@ class Program
                     sb.Append(reinf.Type);
                     sb.Append(":\n");
                     units.Clear();
+                    unitExps.Clear();
+                    expSum = 0f;
                     if (reinf.Entries.Items != null)
                     {
                         foreach (var unit in reinf.Entries.Items)
@@ -159,6 +184,11 @@ class Program
                                     continue;
                                 }
                                 string name = stats.GetUnitName(FileSystem, currentPath: unit.MechUnit.FormattedRef.GetPath(), logger: cl);
+                                if (name == null)
+                                    name = $"NAME_ERROR: {unit.MechUnit.FormattedRef}";
+                                name = name.Trim();
+                                expSum += stats.ExpPrice;
+                                unitExps[name] = stats.ExpPrice;
                                 if (!string.IsNullOrWhiteSpace(name))
                                 {
                                     if (units.Keys.Contains(name))
@@ -183,6 +213,12 @@ class Program
                                     continue;
                                 }
                                 string name = stats.GetUnitName(FileSystem, currentPath: unit.Squad.FormattedRef.GetPath(), logger: cl);
+                                if (name == null)
+                                    name = $"NAME_ERROR: {unit.Squad.FormattedRef}";
+                                name = name.Trim();
+                                float squadExpPrice = stats.GetSquadExpPrice(FileSystem, unit.Squad.FormattedRef.GetPath(), cl);
+                                expSum += squadExpPrice;
+                                unitExps[name] = squadExpPrice;
                                 if (!string.IsNullOrWhiteSpace(name))
                                 {
                                     if (units.Keys.Contains(name))
@@ -207,8 +243,10 @@ class Program
                         sb.Append(unit.Value);
                         sb.Append("x: ");
                         sb.Append(unit.Key);
+                        sb.Append($" (ExpPrice: {unitExps[unit.Key]})");
                         sb.Append('\n');
                     }
+                    sb.Append($"                ExpPriceSum: {expSum}\n");
                 }
                 inx++;
             }
