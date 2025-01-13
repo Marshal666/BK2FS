@@ -73,7 +73,7 @@ namespace ZipFileSystem
 						path = path.GetDirectory();
 					InfantryRPGStats inf = (InfantryRPGStats)member.ReadXMLObject(typeof(InfantryRPGStats), fs);
 					ret.Add((spath, inf));
-					logs.WriteLine("Found infantry: " + inf.GetName(fs, path));
+					//logs.WriteLine("Found infantry: " + inf.GetName(fs, path));
 				} catch(Exception e)
 				{
 					logs?.WriteLine("Error: " + e.Message, Color.Red);

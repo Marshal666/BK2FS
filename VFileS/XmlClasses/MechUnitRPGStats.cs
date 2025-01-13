@@ -18,7 +18,9 @@ namespace ZipFileSystem
 		public FileRef IconTexture;
 		public FileRef LocalizedNameFileRef;
 
-		string nameCache = null;
+        public string DBtype;
+
+        string nameCache = null;
 		public string GetUnitName(IVirtualFileSystem fs, string currentPath = null, ILogger logger = null)
 		{
 			try
@@ -38,7 +40,6 @@ namespace ZipFileSystem
 
 		public FileRef AnimableModel;
 		public FileRef TransportableModel;
-
 
 		public float Sight;
 		public float SightPower;
@@ -66,6 +67,8 @@ namespace ZipFileSystem
 		public ArmorsClass armors;
 
 		public FileRef ArmorPattern;
+
+		public GunnersClass Gunners;
 
 		///////////////////////////////////////////////////////
 		///Plane related stuff...
@@ -262,6 +265,53 @@ namespace ZipFileSystem
 
 			
 
+		}
+
+		public class GunnersClass
+		{
+
+            [XmlElement(ElementName = "Item")]
+            public Item4[] Items;
+
+			public class Item4
+			{
+
+				public class smallGunners
+				{
+                    [XmlElement(ElementName = "Item")]
+                    public Vector2[] Items;
+
+                    public class Vector2
+                    {
+                        public float x, y;
+                    }
+                }
+
+				public smallGunners gunners;
+
+			}
+		}
+
+		public bool HasGunners
+		{
+			get
+			{
+				if(Gunners == null)
+					return false;
+				if (Gunners.Items == null)
+					return false;
+				if(Gunners.Items.Length == 0) 
+					return false;
+                if (Gunners.Items[0] == null)
+                    return false;
+                if (Gunners.Items[0].gunners == null)
+					return false;
+                if (Gunners.Items[0].gunners.Items == null)
+                    return false;
+                if (Gunners.Items[0].gunners.Items.Length == 0)
+                    return false;
+                return true;
+			}
 		}
 
 	}

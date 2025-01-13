@@ -3,9 +3,70 @@ using ZipFileSystem;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Text;
+using VFileS.XmlClasses;
 
 class Program
 {
+
+    public static SquadRPGStats? LoadSquadRPGStats(
+            XmlSerializer ser, 
+            VirtualFileSystem FileSystem, 
+            Reinforcement.EntriesClass.ItemClass unit
+        )
+    {
+        return (SquadRPGStats?)ser.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
+    }
+
+    public static SquadRPGStats? LoadSquadRPGStats(
+        XmlSerializer ser,
+        VirtualFileSystem FileSystem,
+        FileRef unit
+    )
+    {
+        return (SquadRPGStats?)ser.Deserialize(unit.GetFileContentsBin(FileSystem).ToMemoryStream());
+    }
+
+    public static MechUnitRPGStats? LoadMechUnitRPGStats(
+            XmlSerializer ser, 
+            VirtualFileSystem FileSystem, 
+            Reinforcement.EntriesClass.ItemClass unit
+        )
+    {
+        var ss = unit.MechUnit.GetFileContentsBin(FileSystem).ToMemoryStream();
+        if (ss == null)
+            return null;
+        return (MechUnitRPGStats?)ser.Deserialize(ss);
+    }
+
+    public static MechUnitRPGStats? LoadMechUnitRPGStats(
+        XmlSerializer ser,
+        VirtualFileSystem FileSystem,
+        FileRef unit
+    )
+    {
+        var ss = unit.GetFileContentsBin(FileSystem).ToMemoryStream();
+        if (ss == null)
+            return null;
+        return (MechUnitRPGStats?)ser.Deserialize(ss);
+    }
+
+    public static PartyDependentInfo? GetPartyInfo(MultiplayerConsts.SidesClass.ItemClass1 item, VirtualFileSystem fs)
+    {
+        XmlSerializer partySer = new XmlSerializer(typeof(PartyDependentInfo));
+        return (PartyDependentInfo?)partySer.Deserialize(item.PartyInfo.GetFileContentsBin(fs).ToMemoryStream());
+    }
+
+    public static HashSet<string> ArtyDB_Types = new HashSet<string>() 
+    {
+        "DB_RPG_TYPE_ART_HEAVY_MG",
+        "DB_RPG_TYPE_ART_MORTAR",
+        "DB_RPG_TYPE_ART_GUN",
+        "DB_RPG_TYPE_ART_AAGUN",
+        "DB_RPG_TYPE_ART_HEAVY_GUN",
+        "DB_RPG_TYPE_ART_HOWITZER",
+        "DB_RPG_TYPE_ART_ROCKET",
+        "DB_RPG_TYPE_ART_SUPER",
+    };
 
     static void Main(string[] args)
     {
@@ -51,6 +112,51 @@ class Program
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(side.NameFileRef.GetFileContents(FileSystem).Trim());
+            PartyDependentInfo info = GetPartyInfo(side, FileSystem);
+
+            // Game does this internally or something like that
+            if(info.AAGunSquad == null)
+            {
+                info.AAGunSquad = info.GunCrewSquad;
+            }
+
+            if(
+                    info.GunCrewSquad == null || 
+                    info.HowitzerGunCrewSquad == null || 
+                    info.ResupplyEngineerSquad == null || 
+                    info.HeavyMachinegunSquad == null || 
+                    info.AAGunSquad == null
+                )
+            {
+                cl.WriteLine("Some important squad in PartyDependentInfo is null!!!\nShit might crash now...");
+            }
+            SquadRPGStats GunCrewSquad = LoadSquadRPGStats(squadSer, FileSystem, info.GunCrewSquad);
+            SquadRPGStats HowitzerGunCrewSquad = LoadSquadRPGStats(squadSer, FileSystem, info.HowitzerGunCrewSquad);
+            SquadRPGStats HeavyMachinegunSquad = LoadSquadRPGStats(squadSer, FileSystem, info.HeavyMachinegunSquad);
+            SquadRPGStats AAGunSquad = LoadSquadRPGStats(squadSer, FileSystem, info.AAGunSquad);
+            SquadRPGStats ResupplyEngineerSquad = LoadSquadRPGStats(squadSer, FileSystem, info.ResupplyEngineerSquad);
+
+            Dictionary<string, SquadRPGStats> ArtyDB_Types = new()
+            {
+                { "DB_RPG_TYPE_ART_HEAVY_MG", HeavyMachinegunSquad },
+                { "DB_RPG_TYPE_ART_MORTAR", GunCrewSquad },
+                { "DB_RPG_TYPE_ART_GUN", GunCrewSquad },
+                { "DB_RPG_TYPE_ART_AAGUN", AAGunSquad },
+                { "DB_RPG_TYPE_ART_HEAVY_GUN", GunCrewSquad },
+                { "DB_RPG_TYPE_ART_HOWITZER", GunCrewSquad },
+                { "DB_RPG_TYPE_ART_ROCKET", GunCrewSquad },
+                { "DB_RPG_TYPE_ART_SUPER", GunCrewSquad },
+            };
+
+            Dictionary<SquadRPGStats, FileRef> SquadPaths = new()
+            {
+                { GunCrewSquad, info.GunCrewSquad},
+                { HowitzerGunCrewSquad, info.HowitzerGunCrewSquad},
+                { HeavyMachinegunSquad, info.HeavyMachinegunSquad},
+                { AAGunSquad, info.AAGunSquad},
+                { ResupplyEngineerSquad, info.ResupplyEngineerSquad},
+            };
+
             sb.Append(":\n");
             int inx = 0;
             foreach (var year in data.TechLevels.Items)
@@ -90,12 +196,34 @@ class Program
                             //sb.Append(name);
                             //sb.Append('\n');
                         }
+                        if (ArtyDB_Types.Keys.Contains(stats.DBtype) && stats.HasGunners)
+                        {
+                            var squad = ArtyDB_Types[stats.DBtype];
+                            name = squad.GetUnitName(FileSystem, SquadPaths[squad].FormattedRef.GetPath(), logger: cl);
+
+                            if (string.IsNullOrWhiteSpace(name))
+                            {
+                                name = $"NAME_ERROR: {SquadPaths[squad].FormattedRef}";
+                            }
+
+                            if (units.Keys.Contains(name))
+                                units[name]++;
+                            else
+                                units[name] = 1;
+
+                            var squad_exp = squad.GetSquadExpPrice(FileSystem, SquadPaths[squad].FormattedRef.GetPath(), cl);
+
+                            expSum += squad_exp;
+
+                            unitExps[name] = squad_exp;
+
+                        }
                     } else if(!string.IsNullOrEmpty(unit.Squad.FormattedRef))
                     {
                         SquadRPGStats stats;
                         try
                         {
-                            stats = (SquadRPGStats)squadSer.Deserialize(unit.Squad.GetFileContentsBin(FileSystem).ToMemoryStream());
+                            stats = LoadSquadRPGStats(squadSer, FileSystem, unit);
                         } catch(Exception ex)
                         {
                             cl.WriteLine($"Error reading squad stats: {ex.Message}");
@@ -165,10 +293,7 @@ class Program
                                 MechUnitRPGStats stats = null;
                                 try
                                 {
-                                    var ss = unit.MechUnit.GetFileContentsBin(FileSystem).ToMemoryStream();
-                                    if (ss == null)
-                                        continue;
-                                    stats = (MechUnitRPGStats)mechStatsSer.Deserialize(ss);
+                                    stats = LoadMechUnitRPGStats(mechStatsSer, FileSystem, unit);
                                     if (stats == null)
                                         continue;
                                 }
@@ -198,6 +323,28 @@ class Program
                                     //sb.Append("                ");
                                     //sb.Append(name);
                                     //sb.Append('\n');
+                                }
+                                if (ArtyDB_Types.Keys.Contains(stats.DBtype) && stats.HasGunners)
+                                {
+                                    var squad = ArtyDB_Types[stats.DBtype];
+                                    name = squad.GetUnitName(FileSystem, SquadPaths[squad].FormattedRef.GetPath(), logger: cl);
+
+                                    if(string.IsNullOrWhiteSpace(name))
+                                    {
+                                        name = $"NAME_ERROR: {SquadPaths[squad].FormattedRef}";
+                                    }
+
+                                    if (units.Keys.Contains(name))
+                                        units[name]++;
+                                    else
+                                        units[name] = 1;
+
+                                    var squad_exp = squad.GetSquadExpPrice(FileSystem, SquadPaths[squad].FormattedRef.GetPath(), cl);
+
+                                    expSum += squad_exp;
+
+                                    unitExps[name] = squad_exp;
+
                                 }
                             }
                             else if (!string.IsNullOrEmpty(unit.Squad.FormattedRef))
